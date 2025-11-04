@@ -151,7 +151,7 @@
         });
         wrapper = new google.visualization.ChartWrapper({dataTable, chartType, options});
         wrapper.draw(result[0]);
-        result.bind("dblclick", function() {
+        result.on("dblclick", function() {
           var editor;
           editor = new google.visualization.ChartEditor();
           google.visualization.events.addListener(editor, 'ok', function() {
