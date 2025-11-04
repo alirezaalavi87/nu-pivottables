@@ -2,11 +2,12 @@
   var callWithJQuery;
 
   callWithJQuery = function(pivotModule) {
-    if (typeof exports === "object" && typeof module === "object") {
+    if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"));
-    } else if (typeof define === "function" && define.amd) {
+    } else if (typeof define === "function" && define.amd) { // AMD
       return define(["jquery"], pivotModule);
     } else {
+      // Plain browser env
       return pivotModule(jQuery);
     }
   };
@@ -54,7 +55,7 @@
         "Suma de enteros": tpl.sum(frFmtInt),
         "Promedio": tpl.average(frFmt),
         "Mediana": tpl.median(frFmt),
-        "Diferencia": tpl["var"](1, frFmt),
+        "Diferencia": tpl.var(1, frFmt),
         "Desviación estándar de la muestra": tpl.stdev(1, frFmt),
         "Mínimo": tpl.min(frFmt),
         "Máximo": tpl.max(frFmt),

@@ -2,21 +2,19 @@
   var callWithJQuery;
 
   callWithJQuery = function(pivotModule) {
-    if (typeof exports === "object" && typeof module === "object") {
+    if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"), require("c3"));
-    } else if (typeof define === "function" && define.amd) {
+    } else if (typeof define === "function" && define.amd) { // AMD
       return define(["jquery", "c3"], pivotModule);
     } else {
+      // Plain browser env
       return pivotModule(jQuery, c3);
     }
   };
 
   callWithJQuery(function($, c3) {
     var makeC3Chart;
-    makeC3Chart = function(chartOpts) {
-      if (chartOpts == null) {
-        chartOpts = {};
-      }
+    makeC3Chart = function(chartOpts = {}) {
       return function(pivotData, opts) {
         var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, renderArea, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
@@ -65,7 +63,7 @@
         rotationAngle = 0;
         fullAggName = pivotData.aggregatorName;
         if (pivotData.valAttrs.length) {
-          fullAggName += "(" + (pivotData.valAttrs.join(", ")) + ")";
+          fullAggName += `(${pivotData.valAttrs.join(", ")})`;
         }
         if (chartOpts.type === "scatter") {
           scatterData = {
@@ -79,10 +77,10 @@
           groupByTitle = attrs.slice(2).join("-");
           titleText = vAxisTitle;
           if (hAxisTitle !== "") {
-            titleText += " " + opts.localeStrings.vs + " " + hAxisTitle;
+            titleText += ` ${opts.localeStrings.vs} ${hAxisTitle}`;
           }
           if (groupByTitle !== "") {
-            titleText += " " + opts.localeStrings.by + " " + groupByTitle;
+            titleText += ` ${opts.localeStrings.by} ${groupByTitle}`;
           }
           for (i = 0, len = rowKeys.length; i < len; i++) {
             rowKey = rowKeys[i];
@@ -150,10 +148,10 @@
           }
           titleText = fullAggName;
           if (hAxisTitle !== "") {
-            titleText += " " + opts.localeStrings.vs + " " + hAxisTitle;
+            titleText += ` ${opts.localeStrings.vs} ${hAxisTitle}`;
           }
           if (groupByTitle !== "") {
-            titleText += " " + opts.localeStrings.by + " " + groupByTitle;
+            titleText += ` ${opts.localeStrings.by} ${groupByTitle}`;
           }
         }
         title = $("<p>", {
@@ -216,8 +214,11 @@
               return "";
             },
             value: function(a, b, c, d, e) {
-              var ref4;
-              ref4 = e[0], series = ref4.name, y = ref4.value, x = ref4.x;
+              ({
+                name: series,
+                value: y,
+                x
+              } = e[0]);
               return formatter(scatterData.t[series][x][y]);
             }
           };
@@ -261,7 +262,9 @@
           if (chartOpts.horizontal) {
             params.data.groups = [
               (function() {
-                var len5, n, results;
+                var len5,
+              n,
+              results;
                 results = [];
                 for (n = 0, len5 = colKeys.length; n < len5; n++) {
                   x = colKeys[n];
@@ -273,7 +276,9 @@
           } else {
             params.data.groups = [
               (function() {
-                var len5, n, results;
+                var len5,
+              n,
+              results;
                 results = [];
                 for (n = 0, len5 = rowKeys.length; n < len5; n++) {
                   x = rowKeys[n];

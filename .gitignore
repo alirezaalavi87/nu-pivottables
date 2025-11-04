@@ -6,3 +6,8 @@ Rdatasets
 composer.lock
 
 yarn.lock
+dist/pivot.js
+dist/pivot.js.map
+dist/pivot.min.css
+dist/pivot.min.js
+dist/pivot.min.js.map
