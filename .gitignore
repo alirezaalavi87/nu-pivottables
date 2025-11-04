@@ -6,7 +6,6 @@ Rdatasets
 composer.lock
 
 yarn.lock
-dist/pivot.js
 dist/*.js.map
 dist/*.min.css
 dist/*.min.js

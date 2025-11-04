@@ -2,11 +2,12 @@
   var callWithJQuery;
 
   callWithJQuery = function(pivotModule) {
-    if (typeof exports === "object" && typeof module === "object") {
+    if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"));
-    } else if (typeof define === "function" && define.amd) {
+    } else if (typeof define === "function" && define.amd) { // AMD
       return define(["jquery"], pivotModule);
     } else {
+      // Plain browser env
       return pivotModule(jQuery);
     }
   };
@@ -40,7 +41,7 @@
         }
         fullAggName = pivotData.aggregatorName;
         if (pivotData.valAttrs.length) {
-          fullAggName += "(" + (pivotData.valAttrs.join(", ")) + ")";
+          fullAggName += `(${pivotData.valAttrs.join(", ")})`;
         }
         headers = (function() {
           var i, len, results;
@@ -104,11 +105,11 @@
           title = vAxisTitle = fullAggName;
           hAxisTitle = pivotData.colAttrs.join("-");
           if (hAxisTitle !== "") {
-            title += " " + opts.localeStrings.vs + " " + hAxisTitle;
+            title += ` ${opts.localeStrings.vs} ${hAxisTitle}`;
           }
           groupByTitle = pivotData.rowAttrs.join("-");
           if (groupByTitle !== "") {
-            title += " " + opts.localeStrings.by + " " + groupByTitle;
+            title += ` ${opts.localeStrings.by} ${groupByTitle}`;
           }
         }
         options = {
@@ -148,11 +149,7 @@
           width: "100%",
           height: "100%"
         });
-        wrapper = new google.visualization.ChartWrapper({
-          dataTable: dataTable,
-          chartType: chartType,
-          options: options
-        });
+        wrapper = new google.visualization.ChartWrapper({dataTable, chartType, options});
         wrapper.draw(result[0]);
         result.bind("dblclick", function() {
           var editor;

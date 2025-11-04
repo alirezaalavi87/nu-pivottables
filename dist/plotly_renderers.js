@@ -2,27 +2,19 @@
   var callWithJQuery;
 
   callWithJQuery = function(pivotModule) {
-    if (typeof exports === "object" && typeof module === "object") {
+    if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"), require("plotly.js"));
-    } else if (typeof define === "function" && define.amd) {
+    } else if (typeof define === "function" && define.amd) { // AMD
       return define(["jquery", "plotly.js"], pivotModule);
     } else {
+      // Plain browser env
       return pivotModule(jQuery, Plotly);
     }
   };
 
   callWithJQuery(function($, Plotly) {
     var makePlotlyChart, makePlotlyScatterChart;
-    makePlotlyChart = function(traceOptions, layoutOptions, transpose) {
-      if (traceOptions == null) {
-        traceOptions = {};
-      }
-      if (layoutOptions == null) {
-        layoutOptions = {};
-      }
-      if (transpose == null) {
-        transpose = false;
-      }
+    makePlotlyChart = function(traceOptions = {}, layoutOptions = {}, transpose = false) {
       return function(pivotData, opts) {
         var colKeys, columns, d, data, datumKeys, defaults, fullAggName, groupByTitle, hAxisTitle, i, layout, result, rowKeys, rows, titleText, traceKeys;
         defaults = {
@@ -46,7 +38,7 @@
         }
         fullAggName = pivotData.aggregatorName;
         if (pivotData.valAttrs.length) {
-          fullAggName += "(" + (pivotData.valAttrs.join(", ")) + ")";
+          fullAggName += `(${pivotData.valAttrs.join(", ")})`;
         }
         data = traceKeys.map(function(traceKey) {
           var datumKey, j, labels, len, trace, val, values;
@@ -79,10 +71,10 @@
         }
         titleText = fullAggName;
         if (hAxisTitle !== "") {
-          titleText += " " + opts.localeStrings.vs + " " + hAxisTitle;
+          titleText += ` ${opts.localeStrings.vs} ${hAxisTitle}`;
         }
         if (groupByTitle !== "") {
-          titleText += " " + opts.localeStrings.by + " " + groupByTitle;
+          titleText += ` ${opts.localeStrings.by} ${groupByTitle}`;
         }
         layout = {
           title: titleText,
@@ -93,10 +85,7 @@
         if (traceOptions.type === 'pie') {
           columns = Math.ceil(Math.sqrt(data.length));
           rows = Math.ceil(data.length / columns);
-          layout.grid = {
-            columns: columns,
-            rows: rows
-          };
+          layout.grid = {columns, rows};
           for (i in data) {
             d = data[i];
             d.domain = {
