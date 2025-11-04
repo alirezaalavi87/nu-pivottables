@@ -52,7 +52,7 @@ callWithJQuery ($) ->
             .attr("autofocus", "true")
             .attr("dir", "auto")
             .on "keyup", ->
-                filter = $(this).val().toLowerCase().trim()
+                filter = String($(this).val().toLowerCase()).trim()
                 valuesBox
                     .find(".pvtCheckContainer li")
                     .each ->
@@ -399,9 +399,9 @@ callWithJQuery ($) ->
 
     getSort = (sorters, attr) ->
         if sorters?
-            if $.isFunction(sorters)
+            if typeof sorters is "function"
                 sort = sorters(attr)
-                return sort if $.isFunction(sort)
+                return sort if typeof sort is "function"
             else if sorters[attr]?
                 return sorters[attr]
         return naturalSort
@@ -445,10 +445,10 @@ callWithJQuery ($) ->
                     f(record)
 
             #if it's a function, have it call us back
-            if $.isFunction(input)
+            if typeof input is "function"
                 input(addRecord)
-            else if $.isArray(input)
-                if $.isArray(input[0]) #array of arrays
+            else if Array.isArray(input)
+                if Array.isArray(input[0]) #array of arrays
                     for own i, compactRecord of input when i > 0
                         record = {}
                         record[k] = compactRecord[j] for own j, k of input[0]
@@ -830,7 +830,7 @@ callWithJQuery ($) ->
             renderer = $("<select>")
                 .addClass('pvtRenderer')
                 .appendTo(rendererControl)
-                .bind "change", -> refresh() #capture reference
+                .on "change", -> refresh() #capture reference
             for own x of opts.renderers
                 $("<option>").val(x).html(x).appendTo(renderer)
 
@@ -883,7 +883,7 @@ callWithJQuery ($) ->
             #aggregator menu and value area
 
             aggregator = $("<select>").addClass('pvtAggregator')
-                .bind "change", -> refresh() #capture reference
+                .on "change", -> refresh() #capture reference
             for own x of opts.aggregators
                 aggregator.append $("<option>").val(x).html(x)
 
@@ -894,14 +894,14 @@ callWithJQuery ($) ->
 
             rowOrderArrow = $("<a>", role: "button").addClass("pvtRowOrder")
                 .data("order", opts.rowOrder).html(ordering[opts.rowOrder].rowSymbol)
-                .bind "click", ->
+                .on "click", ->
                     $(this).data("order", ordering[$(this).data("order")].next)
                     $(this).html(ordering[$(this).data("order")].rowSymbol)
                     refresh()
 
             colOrderArrow = $("<a>", role: "button").addClass("pvtColOrder")
                 .data("order", opts.colOrder).html(ordering[opts.colOrder].colSymbol)
-                .bind "click", ->
+                .on "click", ->
                     $(this).data("order", ordering[$(this).data("order")].next)
                     $(this).html(ordering[$(this).data("order")].colSymbol)
                     refresh()
@@ -979,7 +979,7 @@ callWithJQuery ($) ->
                         newDropdown = $("<select>")
                             .addClass('pvtAttrDropdown')
                             .append($("<option>"))
-                            .bind "change", -> refresh()
+                            .on "change", -> refresh()
                         for attr in shownInAggregators
                             newDropdown.append($("<option>").val(attr).text(attr))
                         pvtVals.append(newDropdown)

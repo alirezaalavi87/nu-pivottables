@@ -81,11 +81,11 @@
                     });
                 };
 
-                $("#csv").bind("change", function(event){
+                $("#csv").on("change", function(event){
                     parseAndPivot(event.target.files[0]);
                 });
 
-                $("#textarea").bind("input change", function(){
+                $("#textarea").on("input change", function(){
                     parseAndPivot($("#textarea").val());
                 });
 
