@@ -12,6 +12,11 @@ callWithJQuery ($) ->
     ###
     Utilities
     ###
+
+    ###
+    COMPUTATION
+    renders the attributes' values box
+    ###
     renderAttrValuesBox = (attrValues, opts, {attrName}) ->
         values = (v for v of attrValues[attrName])
         valuesBox = $("<dialog>")
@@ -41,6 +46,8 @@ callWithJQuery ($) ->
             type: "text",
             placeholder: opts.localeStrings.filterResults,
             class: "pvtSearch"
+            autofocus: true
+            dir: "auto"
         })
             .attr("autofocus", "true")
             .attr("dir", "auto")
@@ -768,8 +775,11 @@ callWithJQuery ($) ->
             hiddenFromAggregators: []
             hiddenFromDragDrop: []
             menuLimit: 500
-            cols: [], rows: [], vals: []
-            rowOrder: "key_a_to_z", colOrder: "key_a_to_z"
+            cols: []
+            rows: []
+            vals: []
+            rowOrder: "key_a_to_z"
+            colOrder: "key_a_to_z"
             dataClass: PivotData
             exclusions: {}
             inclusions: {}
@@ -826,7 +836,7 @@ callWithJQuery ($) ->
 
 
             #axis list, including the double-click menu
-            unused = $("<td>").addClass('pvtAxisContainer pvtUnused pvtUiCell')
+            unusedAttrs = $("<td>").addClass('pvtAxisContainer pvtUnused pvtUiCell')
             shownAttributes = (a for a of attrValues when a not in opts.hiddenAttributes)
             shownInAggregators = (c for c in shownAttributes when c not in opts.hiddenFromAggregators)
             shownInDragDrop = (c for c in shownAttributes when c not in opts.hiddenFromDragDrop)
@@ -844,9 +854,9 @@ callWithJQuery ($) ->
                 unusedAttrsVerticalAutoOverride = attrLength > unusedAttrsVerticalAutoCutoff
 
             if opts.unusedAttrsVertical == true or unusedAttrsVerticalAutoOverride
-                unused.addClass('pvtVertList')
+                unusedAttrs.addClass('pvtVertList')
             else
-                unused.addClass('pvtHorizList')
+                unusedAttrs.addClass('pvtHorizList')
 
             for own i, attr of shownInDragDrop
                 do (attr) ->
@@ -937,20 +947,21 @@ callWithJQuery ($) ->
 #                                .removeClass("changed").prop("checked", true)
 #                            closeFilterBox()
 
-                    triangleLink = $("<span>").addClass('pvtTriangle')
+                triangleLink = $("<span>").addClass('pvtTriangle')
                         .html(" &#x25BE;")
                         .on "click", (e) -> toggleAttrValuesBox(attrValues, opts, {attrName: attr})
 
-                    attrElem = $("<li>")
-                        .addClass("axis_#{i}")
-                        .append $("<span>")
-                        .addClass('pvtAttr')
-                        .text(attr)
-                        .data("attrName", attr)
-                        .append(triangleLink)
+                attrElem = $("<li>")
+                    .addClass("axis_#{i}")
+                    .append $("<span>")
+                    .addClass('pvtAttr')
+                    .text(attr)
+                    .data("attrName", attr)
+                    .append(triangleLink)
 
+                #TODO check if attribute has excluded values and update it's css style if so
 #                    attrElem.addClass('pvtFilteredAttribute') if hasExcludedItem
-                    unused.append(attrElem)
+                unusedAttrs.append(attrElem)
 
             tr1 = $("<tr>").appendTo(uiTable)
 
@@ -1004,9 +1015,9 @@ callWithJQuery ($) ->
             #finally the renderer dropdown and unused attribs are inserted at the requested location
             if opts.unusedAttrsVertical == true or unusedAttrsVerticalAutoOverride
                 uiTable.find('tr:nth-child(1)').prepend rendererControl
-                uiTable.find('tr:nth-child(2)').prepend unused
+                uiTable.find('tr:nth-child(2)').prepend unusedAttrs
             else
-                uiTable.prepend $("<tr>").append(rendererControl).append(unused)
+                uiTable.prepend $("<tr>").append(rendererControl).append(unusedAttrs)
 
             #render the UI in its default state
             @html uiTable
