@@ -265,7 +265,7 @@ button,
     color: var(--color__on-primary);
 }
 
-.pvtFilterBox {
+.pvtAttrValuesBox {
     flex-direction: column;
     width: 300px;
     background-color: var(--color__surface);
@@ -308,7 +308,7 @@ button,
     }
 }
 
-.pvtFilterBox h4 {
+.pvtAttrValuesBox h4 {
     margin: 0;
 }
 
