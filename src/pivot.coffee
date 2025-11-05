@@ -17,7 +17,7 @@ callWithJQuery ($) ->
     COMPUTATION
     renders the attributes' values box
     ###
-    renderAttrValuesBox = (attrValues, opts, {attrName}) ->
+    renderAttrValuesBox = (attrValues, opts, filterHandler, {attrName}) ->
         values = (v for v of attrValues[attrName])
         valuesBox = $("<dialog>")
             .attr("closedby", "any")
@@ -29,7 +29,9 @@ callWithJQuery ($) ->
         updateBtn = $("<button>", {type: "button"})
             .addClass("btn btn--confirm")
             .text("CONFIRM")
-        #                        .on "click", updateFilters #TODO implement updateFilters
+            .on "click", ->
+                await filterHandler()
+                hideAttrValuesBox()
         toolbarShortcuts = $("<div>")
             .addClass("toolbar__shortcuts")
             .append(
@@ -63,8 +65,6 @@ callWithJQuery ($) ->
                             return $(this).hide()
         boxTitle = $("<h4>")
             .text("#{attrName} - (#{values.length})")
-        checkContainer = $("<ul>")
-            .addClass("pvtCheckContainer")
 
         # Handle if menu entries are too large
         if values.length > opts.menuLimit
@@ -73,16 +73,23 @@ callWithJQuery ($) ->
             )
             return valuesBox
 
+        valuesList = renderFilterList(values, attrValues, opts, attrName)
         # Assemble the UI
         valuesBox.append toolbar, boxTitle
         toolbar.append updateBtn, toolbarShortcuts
         valuesBox.append $("<br>")
-        valuesBox.append pivotSearchInput, checkContainer
+        valuesBox.append pivotSearchInput, valuesList
 
+
+        valuesBox
+
+    renderFilterList = (values, attrValues, opts, attrName) ->
+        checkContainer = $("<ul>")
+            .addClass("pvtCheckContainer")
         # Render Items
         for value in values.sort(getSort(opts.sorters, attrName))
             valueCount = attrValues[attrName][value]
-            filterItem = $("<label>")
+            filterItem = $("<li>")
             filterItemExcluded = false
             if opts.inclusions[attrName]
                 filterItemExcluded = (value not in opts.inclusions[attrName])
@@ -94,26 +101,28 @@ callWithJQuery ($) ->
                 .data("filter", [attrName, value])
                 .addClass("pvtFilter")
                 .appendTo(filterItem)
-                .on "change", -> $(this).toggleClass("changed")
+                .on "change", ->
+                    isSelected = $(this).is(":checked")
+                    updateFilterTmp({attrName, value}, isSelected, opts)
             filterItem.append $("<span>").addClass("value").text(value)
             filterItem.append $("<span>").addClass("count").text("("+valueCount+")")
-            checkContainer.append $("<li>").append(filterItem)
+            checkContainer.append(filterItem)
 
-        valuesBox
+        checkContainer
 
     # TODO I feel like toggleAttrValuesBox can be cleaner with it's parameters.
     # Currently there is some argument drilling going on. Some say it can be better with state monads or currying but
     #-I should look deeper into them
-    toggleAttrValuesBox = (attrValues, opts, {attrName, anchorSelector}) ->
+    toggleAttrValuesBox = (attrValues, opts, refreshHandler, {attrName, anchorSelector}) ->
         isBoxOpen = $(".pvtAttrValuesBox").length > 0
-        if isBoxOpen then hideAttrValuesBox() else showAttrValuesBox(attrValues, opts, {attrName, anchorSelector})
+        if isBoxOpen then hideAttrValuesBox() else showAttrValuesBox(attrValues, opts, refreshHandler, {attrName, anchorSelector})
 
-    showAttrValuesBox = (attrValues, opts, {attrName, anchorSelector}) ->
+    showAttrValuesBox = (attrValues, opts, refreshHandler, {attrName, anchorSelector}) ->
         anchorSelector = anchorSelector or ".pvtUi"
         anchorEl = $(anchorSelector)
         if not anchorEl?
             throw "Element with selector #{anchorSelector} was not found to attach the attrValuesBox to"
-        valuesBox = renderAttrValuesBox(attrValues, opts, {attrName, anchorSelector})
+        valuesBox = renderAttrValuesBox(attrValues, opts, refreshHandler, {attrName, anchorSelector})
         valuesBox.find(".pvtSearch").val("")
         anchorEl.prepend(valuesBox) #Add valuesBox to DOM on the specified anchor
         valuesBox[0].showModal()
@@ -122,6 +131,13 @@ callWithJQuery ($) ->
         # TODO Empty the attr values temporary exclusions
         # resetAttrValuesExclusions()
         $(".pvtAttrValuesBox").remove()
+
+    updateFilterTmp = ({attrName, value}, isSelected, opts) ->
+        # If attr doesn't exist, create i in exclusionsTmp
+        if not opts.exclusionsTmp[attrName]
+            opts.exclusionsTmp[attrName] = {}
+        opts.exclusionsTmp[attrName][value] = !isSelected
+
 
     addSeparators = (nStr, thousandsSep, decimalSep) ->
         nStr += ''
@@ -860,23 +876,17 @@ callWithJQuery ($) ->
 
             # Render attribute elements
             for own i, attr of shownInDragDrop
-                triangleLink = $("<span>").addClass('pvtTriangle')
-                        .html(" &#x25BE;")
-                        .on "click", (e) -> toggleAttrValuesBox(attrValues, opts, {attrName: attr})
+                do(attr) ->
+                    triangleLink = $("<span>").addClass('pvtTriangle')
+                            .html(" &#x25BE;")
+                            .on "click", (e) ->
+                                toggleAttrValuesBox(attrValues, opts, refreshAsync, {attrName: attr})
+                    attrElem = $("<li>").addClass("axis_#{i}")
+                        .append $("<span>").addClass('pvtAttr').text(attr).data("attrName", attr).append(triangleLink)
 
-#                attrElem = $("<li>")
-#                    .addClass("axis_#{i}")
-#                    .append $("<span>")
-#                        .addClass('pvtAttr')
-#                        .text(attr)
-#                        .data("attrName", attr)
-#                        .append(triangleLink)
-                attrElem = $("<li>").addClass("axis_#{i}")
-                    .append $("<span>").addClass('pvtAttr').text(attr).data("attrName", attr).append(triangleLink)
-
-                #TODO check if attribute has excluded values and update it's css style if so
-#                    attrElem.addClass('pvtFilteredAttribute') if hasExcludedItem
-                unusedAttrs.append(attrElem)
+                    #TODO check if attribute has excluded values and update it's css style if so
+    #                    attrElem.addClass('pvtFilteredAttribute') if hasExcludedItem
+                    unusedAttrs.append(attrElem)
 
             tr1 = $("<tr>").appendTo(uiTable)
 
@@ -1050,6 +1060,13 @@ callWithJQuery ($) ->
             refresh = =>
                 pivotTable.css("opacity", 0.5)
                 setTimeout refreshDelayed, 10
+
+            refreshAsync = =>
+                pivotTable.css("opacity", 0.5)
+                return new Promise (resolve) ->
+                    setTimeout (->
+                        refreshDelayed()
+                        resolve()), 10
 
             #the very first refresh will actually display the table
             refresh()
