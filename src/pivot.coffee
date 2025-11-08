@@ -1,3 +1,5 @@
+# ASKME what does inclusions do? I understand its the opposite of exclusions but what is the use case?
+
 callWithJQuery = (pivotModule) ->
     if typeof exports is "object" and typeof module is "object" # CommonJS
         pivotModule require("jquery")
@@ -8,136 +10,9 @@ callWithJQuery = (pivotModule) ->
         pivotModule jQuery
 
 callWithJQuery ($) ->
-
     ###
     Utilities
     ###
-
-    ###
-    COMPUTATION
-    renders the attributes' values box
-    ###
-    renderAttrValuesBox = (attrValues, opts, filterHandler, {attrName}) ->
-        values = (v for v of attrValues[attrName])
-        valuesBox = $("<dialog>")
-            .attr("closedby", "any")
-            .addClass('pvtAttrValuesBox')
-            .on "close", ->
-                hideAttrValuesBox()
-        toolbar = $("<div>")
-            .addClass("toolbar")
-        updateBtn = $("<button>", {type: "button"})
-            .addClass("btn btn--confirm")
-            .text("CONFIRM")
-            .on "click", ->
-                await filterHandler()
-                hideAttrValuesBox()
-        toolbarShortcuts = $("<div>")
-            .addClass("toolbar__shortcuts")
-            .append(
-          $("<button class='btn'>", {type: "button"})
-              .html(opts.localeStrings.selectAll)
-#                                .on "click", -> changeAllFiltersState true # TODO implement changeAllFiltersState
-        )
-            .append(
-          $("<button class='btn'>", {type: "button"})
-              .html(opts.localeStrings.selectNone)
-#                              .on "click", -> changeAllFiltersState false # TODO implement changeAllFiltersState
-        )
-        pivotSearchInput = $("<input>", {
-            type: "text",
-            placeholder: opts.localeStrings.filterResults,
-            class: "pvtSearch"
-            autofocus: true
-            dir: "auto"
-        })
-            .attr("autofocus", "true")
-            .attr("dir", "auto")
-            .on "keyup", ->
-                filter = String($(this).val().toLowerCase()).trim()
-                valuesBox
-                    .find(".pvtCheckContainer li")
-                    .each ->
-                        testString = $(this).text().toLowerCase().indexOf(filter)
-                        if testString isnt -1
-                            return $(this).show()
-                        else
-                            return $(this).hide()
-        boxTitle = $("<h4>")
-            .text("#{attrName} - (#{values.length})")
-
-        # Handle if menu entries are too large
-        if values.length > opts.menuLimit
-            valuesBox.append(
-              $("<p>").text(opts.localeStrings.tooMany)
-            )
-            return valuesBox
-
-        valuesList = renderFilterList(values, attrValues, opts, attrName)
-        # Assemble the UI
-        valuesBox.append toolbar, boxTitle
-        toolbar.append updateBtn, toolbarShortcuts
-        valuesBox.append $("<br>")
-        valuesBox.append pivotSearchInput, valuesList
-
-
-        valuesBox
-
-    renderFilterList = (values, attrValues, opts, attrName) ->
-        checkContainer = $("<ul>")
-            .addClass("pvtCheckContainer")
-        # Render Items
-        for value in values.sort(getSort(opts.sorters, attrName))
-            valueCount = attrValues[attrName][value]
-            filterItem = $("<li>")
-            filterItemExcluded = false
-            if opts.inclusions[attrName]
-                filterItemExcluded = (value not in opts.inclusions[attrName])
-            else if opts.exclusions[attrName]
-                filterItemExcluded = (value in opts.exclusions[attrName])
-            $("<input>")
-                .attr("type", "checkbox")
-                .prop("checked", !filterItemExcluded)
-                .data("filter", [attrName, value])
-                .addClass("pvtFilter")
-                .appendTo(filterItem)
-                .on "change", ->
-                    isSelected = $(this).is(":checked")
-                    updateFilterTmp({attrName, value}, isSelected, opts)
-            filterItem.append $("<span>").addClass("value").text(value)
-            filterItem.append $("<span>").addClass("count").text("("+valueCount+")")
-            checkContainer.append(filterItem)
-
-        checkContainer
-
-    # TODO I feel like toggleAttrValuesBox can be cleaner with it's parameters.
-    # Currently there is some argument drilling going on. Some say it can be better with state monads or currying but
-    #-I should look deeper into them
-    toggleAttrValuesBox = (attrValues, opts, refreshHandler, {attrName, anchorSelector}) ->
-        isBoxOpen = $(".pvtAttrValuesBox").length > 0
-        if isBoxOpen then hideAttrValuesBox() else showAttrValuesBox(attrValues, opts, refreshHandler, {attrName, anchorSelector})
-
-    showAttrValuesBox = (attrValues, opts, refreshHandler, {attrName, anchorSelector}) ->
-        anchorSelector = anchorSelector or ".pvtUi"
-        anchorEl = $(anchorSelector)
-        if not anchorEl?
-            throw "Element with selector #{anchorSelector} was not found to attach the attrValuesBox to"
-        valuesBox = renderAttrValuesBox(attrValues, opts, refreshHandler, {attrName, anchorSelector})
-        valuesBox.find(".pvtSearch").val("")
-        anchorEl.prepend(valuesBox) #Add valuesBox to DOM on the specified anchor
-        valuesBox[0].showModal()
-
-    hideAttrValuesBox = ->
-        # TODO Empty the attr values temporary exclusions
-        # resetAttrValuesExclusions()
-        $(".pvtAttrValuesBox").remove()
-
-    updateFilterTmp = ({attrName, value}, isSelected, opts) ->
-        # If attr doesn't exist, create i in exclusionsTmp
-        if not opts.exclusionsTmp[attrName]
-            opts.exclusionsTmp[attrName] = {}
-        opts.exclusionsTmp[attrName][value] = !isSelected
-
 
     addSeparators = (nStr, thousandsSep, decimalSep) ->
         nStr += ''
@@ -798,6 +673,7 @@ callWithJQuery ($) ->
             colOrder: "key_a_to_z"
             dataClass: PivotData
             exclusions: {}
+            exclusionsTmp: {}
             inclusions: {}
             unusedAttrsVertical: 85
             autoSortUnusedAttrs: false
@@ -816,6 +692,193 @@ callWithJQuery ($) ->
             opts = $.extend(true, {}, localeDefaults, $.extend({}, defaults, inputOpts))
         else
             opts = existingOpts
+
+        ###
+        Utilities
+        ###
+
+        ###
+        ACTION
+        renders the attributes' values box
+        ###
+        renderAttrValuesBox = (state, {attrName, attrValues, attrElem}) ->
+            values = (v for v of attrValues[attrName])
+            valuesBox = $("<dialog>")
+                .attr("closedby", "any")
+                .addClass('pvtAttrValuesBox')
+                .on "close", ->
+                    hideAttrValuesBox()
+            toolbar = $("<div>")
+                .addClass("toolbar")
+            updateBtn = $("<button>", {type: "button"})
+                .addClass("btn btn--confirm")
+                .text("CONFIRM")
+                .on "click", ->
+                    # Mutate the state with updated filters
+                    opts = updateFilters(state, {attrName, attrElem})
+                    await refreshAsync()
+                    hideAttrValuesBox()
+            toolbarShortcuts = $("<div>")
+                .addClass("toolbar__shortcuts")
+                .append(
+              $("<button class='btn'>", {type: "button"})
+                  .html(state.localeStrings.selectAll)
+    #                                .on "click", -> changeAllFiltersState true # TODO implement changeAllFiltersState
+            )
+                .append(
+              $("<button class='btn'>", {type: "button"})
+                  .html(state.localeStrings.selectNone)
+    #                              .on "click", -> changeAllFiltersState false # TODO implement changeAllFiltersState
+            )
+            pivotSearchInput = $("<input>", {
+                type: "text",
+                placeholder: state.localeStrings.filterResults,
+                class: "pvtSearch"
+                autofocus: true
+                dir: "auto"
+            })
+                .attr("autofocus", "true")
+                .attr("dir", "auto")
+                .on "keyup", ->
+                    filter = String($(this).val().toLowerCase()).trim()
+                    valuesBox.find(".pvtCheckContainer li")
+                        .each ->
+                            testString = $(this).text().toLowerCase().indexOf(filter)
+                            if testString isnt -1
+                                return $(this).show()
+                            else
+                                return $(this).hide()
+
+            boxTitle = $("<h4>")
+                .text("#{attrName} - (#{values.length})")
+
+            # Handle if menu entries are too large
+            if values.length > state.menuLimit
+                valuesBox.append(
+                  $("<p>").text(state.localeStrings.tooMany)
+                )
+                return valuesBox
+
+            valuesList = renderFilterList(values, attrValues, state, attrName)
+            # Assemble the UI
+            valuesBox.append toolbar, boxTitle
+            toolbar.append updateBtn, toolbarShortcuts
+            valuesBox.append $("<br>")
+            valuesBox.append pivotSearchInput, valuesList
+
+            valuesBox
+
+        ###
+        COMPUTATION
+        ###
+        renderFilterList = (values, attrValues, opts, attrName) ->
+            filterList = $("<ul>")
+                .addClass("pvtCheckContainer")
+            # Render Items
+            for value in values.sort(getSort(opts.sorters, attrName))
+                do(value) ->
+                    valueCount = attrValues[attrName][value]
+                    filterItem = $("<li>")
+                    # TODO also check for inclusions? (wtf are inclusions for?)
+                    isFilterItemExcluded = opts?.exclusions[attrName]?.hasOwnProperty(value) ? false
+#                    if opts.inclusions[attrName]
+#                        isFilterItemExcluded = (value not in opts.inclusions[attrName])
+#                    else if opts.exclusions[attrName]
+#                        isFilterItemExcluded = (value in opts.exclusions[attrName])
+                    $("<input>")
+                        .attr("type", "checkbox")
+                        .prop("checked", !isFilterItemExcluded)
+                        .data("filter", [attrName, value])
+                        .addClass("pvtFilter")
+                        .appendTo(filterItem)
+                        .on "change", ->
+                            isSelected = $(this).is(":checked")
+                            opts = updateFiltersTmp({attrName, value}, isSelected, opts)
+                    filterItem.append $("<span>").addClass("value").text(value)
+                    filterItem.append $("<span>").addClass("count").text("("+valueCount+")")
+                    filterList.append(filterItem)
+
+            filterList
+
+        ###
+        COMPUTATION
+        ###
+        hideAttrValuesBox = ->
+            $(".pvtAttrValuesBox").remove()
+
+        ###
+        ACTION
+        ###
+        # TODO I feel like showAttrValuesBox can be cleaner with it's parameters.
+        # Currently there is some argument drilling going on. Some say it can be better with state monads or currying but
+        #-I should look deeper into them
+        showAttrValuesBox = (opts, {attrName, anchorSelector = ".pvtUi", attrValues, attrElem}) ->
+            isBoxOpen = $(".pvtAttrValuesBox").length > 0
+            # Close previous boxes if open
+            if isBoxOpen then hideAttrValuesBox()
+
+            anchorEl = $(anchorSelector)
+            if not anchorEl?
+                throw "Element with selector #{anchorSelector} was not found to attach the attrValuesBox to"
+            valuesBox = renderAttrValuesBox(opts, {attrName, attrValues, attrElem})
+            valuesBox.find(".pvtSearch").val("")
+            anchorEl.prepend(valuesBox) #Add valuesBox to DOM on the specified anchor
+            valuesBox[0].showModal()
+
+        ###
+        COMPUTATION
+        ###
+        updateFiltersTmp = ({attrName, value}, isSelected, state) ->
+            # If attr doesn't exist, create i in exclusionsTmp
+            if not state.exclusionsTmp[attrName]
+                state.exclusionsTmp[attrName] = {}
+            state.exclusionsTmp[attrName][value] = !isSelected
+
+            state
+
+        ###
+        COMPUTATION
+        ###
+        updateFilters = (state, {attrName, attrElem}) ->
+            state.exclusions = mergeFilters state.exclusions, state.exclusionsTmp
+            state.exclusionsTmp = {} # Empty the temporary exclusions after the merge
+            # Update the CSS of the attribute item with exclusions
+            if  Object.prototype.hasOwnProperty.call(opts.exclusions, attrName)
+                attrElem.addClass("pvtFilteredAttribute")
+            else
+                attrElem.removeClass "pvtFilteredAttribute"
+
+            state
+
+        ###
+        COMPUTATION
+        ###
+        mergeFilters = (mainFilters, tmpFilters) ->
+            if !mainFilters or !tmpFilters
+                throw new TypeError(
+                  "provide valid filter objects. filters must be of structure: {obj: {foo: boolean}}",
+                );
+            mergedFilters = mainFilters
+            newAttrs = Object.keys tmpFilters
+            newAttrs.forEach((attr) =>
+                attrValues = Object.keys(tmpFilters[attr])
+                #If attr doesn't exist, create it in exclusions
+                if !mergedFilters[attr]
+                    mergedFilters[attr] = {}
+                attrValues.forEach((value) =>
+                    isValueExcluded = tmpFilters[attr][value]
+                    # If value is should not excluded, remove it from exclusions
+                    if !isValueExcluded
+                        delete mergedFilters[attr][value]
+                        return
+                    # If value should be excluded, add it to exclusions
+                    mergedFilters[attr][value] = isValueExcluded
+                )
+                # Remove empty attrs
+                if !Object.keys(mergedFilters[attr]).length
+                    delete mergedFilters[attr]
+            )
+            mergedFilters
 
         try
             # do a first pass on the data to cache a materialized copy of any
@@ -878,14 +941,12 @@ callWithJQuery ($) ->
             for own i, attr of shownInDragDrop
                 do(attr) ->
                     triangleLink = $("<span>").addClass('pvtTriangle')
-                            .html(" &#x25BE;")
-                            .on "click", (e) ->
-                                toggleAttrValuesBox(attrValues, opts, refreshAsync, {attrName: attr})
+                        .html(" &#x25BE;")
+                        .on "click", ->
+                            showAttrValuesBox(opts, {attrName: attr, attrValues, attrElem})
                     attrElem = $("<li>").addClass("axis_#{i}")
                         .append $("<span>").addClass('pvtAttr').text(attr).data("attrName", attr).append(triangleLink)
 
-                    #TODO check if attribute has excluded values and update it's css style if so
-    #                    attrElem.addClass('pvtFilteredAttribute') if hasExcludedItem
                     unusedAttrs.append(attrElem)
 
             tr1 = $("<tr>").appendTo(uiTable)
@@ -1008,28 +1069,14 @@ callWithJQuery ($) ->
                 subopts.renderer = opts.renderers[renderer.val()]
                 subopts.rowOrder = rowOrderArrow.data("order")
                 subopts.colOrder = colOrderArrow.data("order")
-                #construct filter here
-                exclusions = {}
-                @find('input.pvtFilter').not(':checked').each ->
-                    filter = $(this).data("filter")
-                    if exclusions[filter[0]]?
-                        exclusions[filter[0]].push( filter[1] )
-                    else
-                        exclusions[filter[0]] = [ filter[1] ]
-                #include inclusions when exclusions present
-                inclusions = {}
-                @find('input.pvtFilter:checked').each ->
-                    filter = $(this).data("filter")
-                    if exclusions[filter[0]]?
-                        if inclusions[filter[0]]?
-                            inclusions[filter[0]].push( filter[1] )
-                        else
-                            inclusions[filter[0]] = [ filter[1] ]
 
                 subopts.filter = (record) ->
                     return false if not opts.filter(record)
-                    for k,excludedItems of exclusions
-                        return false if ""+(record[k] ? 'null') in excludedItems
+                    for k,excludedItems of opts.exclusions
+                        # Check if any of the attribute values of the record matches any of the excluded attributes
+                        for attr of excludedItems
+                            if record[k] == attr && excludedItems[attr]
+                                return false
                     return true
 
                 pivotTable.pivot(materializedInput,subopts)
@@ -1039,9 +1086,7 @@ callWithJQuery ($) ->
                     colOrder: subopts.colOrder
                     rowOrder: subopts.rowOrder
                     vals: vals
-                    exclusions: exclusions
-                    inclusions: inclusions
-                    inclusionsInfo: inclusions #duplicated for backwards-compatibility
+                    inclusionsInfo: opts.inclusions #duplicated for backwards-compatibility
                     aggregatorName: aggregator.val()
                     rendererName: renderer.val()
 
