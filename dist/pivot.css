@@ -86,7 +86,7 @@ table.pvtTable .pvtColLabel {
 }
 
 table.pvtTable .pvtTotalLabel {
-    text-align: right;
+    text-align: center;
     font-weight: bold;
     font-size: 11pt;
 }
@@ -120,13 +120,14 @@ table.pvtTable tr td {
 }
 .pvtRowLabel {
     background-color: var(--color__surface-variant);
-    text-align: right;
+    text-align: center;
     white-space: nowrap;
 }
 .pvtAxisLabel {
     background-color: var(--color__secondary);
     color: var(--color__on-secondary);
     white-space: nowrap;
+    text-align: center
 }
 .pvtColLabel {
     background-color: var(--color__surface-variant);
@@ -134,8 +135,7 @@ table.pvtTable tr td {
 .pvtRenderer,
 .pvtAggregator,
 .pvtAttrDropdown {
-    text-align: right;
-    width: 100%;
+    text-align: start;
     min-width: 150px;
     border-radius: 0.25rem;
     border: none;
@@ -215,6 +215,7 @@ table.pvtTable tr td {
     flex-direction: column;
     height: 100%;
     min-height: 128px;
+    min-width: 80px;
 }
 
 .pvtHorizList,
@@ -227,6 +228,7 @@ table.pvtTable tr td {
     flex-wrap: wrap;
     height: 100%;
     min-height: 48px;
+    min-width: 80px;
 }
 
 .pvtFilteredAttribute {
@@ -320,4 +322,9 @@ button,
 
 .pvtRendererArea {
     direction: ltr;
+}
+
+.pvtAxisContainer.pvtUnused.pvtUiCell.pvtVertList {
+    display: table-cell;
+    vertical-align: top;
 }
