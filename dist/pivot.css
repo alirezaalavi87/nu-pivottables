@@ -49,26 +49,15 @@
     --color__outline-dark: #aaa7b3;
 }
 
-@font-face {
-    font-family: "Mitra";
-    src: url(../fonts/BMitra.ttf);
-    src:
-            url(../fonts/BMitra.ttf?#iefix) format("embedded-opentype"),
-            url(../fonts/BMitra.ttf) format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
-
 body {
-    font-family: Mitra, tahoma;
     font-size: 10pt;
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
     background-color: var(--color__background);
 }
 
 p {
-    margin: 0px;
+    margin: 0;
 }
 
 input[type="text"] {
@@ -79,12 +68,11 @@ input[type="text"] {
 }
 
 table.pvtTable {
-    font-family: Mitra, arial;
+    font-family: arial, system-ui;
     font-size: 10pt;
     text-align: left;
     border-collapse: collapse;
     border: 1px solid var(--color__outline);
-    border-width: 1px;
 }
 table.pvtTable tr th,
 table.pvtTable tr th {
