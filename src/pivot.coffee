@@ -1,4 +1,6 @@
 # ASKME what does inclusions do? I understand its the opposite of exclusions but what is the use case?
+# FIXME the css attribute of a filtered attribute, will not be applied when restoring a table from cookie.
+#-The fact that a attribute is filtered or not should be *computed* based on opts.exclusions and applied to the UI
 
 callWithJQuery = (pivotModule) ->
     if typeof exports is "object" and typeof module is "object" # CommonJS
@@ -665,7 +667,7 @@ callWithJQuery ($) ->
             hiddenAttributes: []
             hiddenFromAggregators: []
             hiddenFromDragDrop: []
-            menuLimit: 500
+            menuLimit: 5000
             cols: []
             rows: []
             vals: []
