@@ -119,7 +119,6 @@ table.pvtTable tr td {
 .pvtTotal,
 .pvtGrandTotal {
     font-weight: bold;
-    direction: rtl;
     font-size: 10pt;
     white-space: nowrap;
 }
@@ -197,12 +196,16 @@ table.pvtTable tr td {
 }
 
 .pvtAxisContainer li span.pvtAttr {
+    width: 100%;
     padding: 3px 3px 3px 3px;
     white-space: nowrap;
     border-radius: 3px;
     font-size: 11pt;
     text-overflow: ellipsis;
     overflow: hidden;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
 }
 
 .pvtAxisContainer:has(.pvtVertList) {
@@ -272,7 +275,6 @@ button,
     position: fixed;
     padding: 1em;
     text-align: center;
-    direction: rtl;
     border: 1px solid var(--color__outline);
     border-radius: 1em;
     overflow: auto;
@@ -313,9 +315,8 @@ button,
 }
 
 .pvtCheckContainer {
-    text-align: right;
+    text-align: start;
     font-size: 10pt;
-    direction: rtl;
     width: 100%;
     list-style: none;
     padding: 0;
@@ -331,5 +332,4 @@ button,
 
 .pvtRendererArea {
     direction: ltr;
-    text-align: right;
 }
