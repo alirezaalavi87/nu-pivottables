@@ -717,7 +717,7 @@ callWithJQuery ($) ->
                 .text("CONFIRM")
                 .on "click", ->
                     # Mutate the state with updated filters
-                    opts = updateFilters(state, {attrName, attrElem})
+                    state = updateFilters(state, {attrName, attrElem})
                     await refreshAsync()
                     hideAttrValuesBox()
             toolbarShortcuts = $("<div>")
@@ -725,12 +725,14 @@ callWithJQuery ($) ->
                 .append(
               $("<button class='btn'>", {type: "button"})
                   .html(state.localeStrings.selectAll)
-    #                                .on "click", -> changeAllFiltersState true # TODO implement changeAllFiltersState
+                  .on "click", ->
+                    opts = filterAllAttrValues state, {attrName, attrValues: values, isExcluded: false}
             )
                 .append(
               $("<button class='btn'>", {type: "button"})
                   .html(state.localeStrings.selectNone)
-    #                              .on "click", -> changeAllFiltersState false # TODO implement changeAllFiltersState
+                  .on "click", ->
+                     opts = filterAllAttrValues state, {attrName, attrValues: values, isExcluded: true}
             )
             pivotSearchInput = $("<input>", {
                 type: "text",
@@ -781,7 +783,7 @@ callWithJQuery ($) ->
                 do(value) ->
                     valueCount = attrValues[attrName][value]
                     filterItem = $("<li>")
-                    # TODO also check for inclusions? (wtf are inclusions for?)
+                    # TODO also check for inclusions? (what are inclusions for?)
                     isFilterItemExcluded = opts?.exclusions[attrName]?.hasOwnProperty(value) ? false
 #                    if opts.inclusions[attrName]
 #                        isFilterItemExcluded = (value not in opts.inclusions[attrName])
@@ -882,6 +884,14 @@ callWithJQuery ($) ->
             )
             mergedFilters
 
+        filterAllAttrValues = (state, {attrName, attrValues, isExcluded}) ->
+            state.exclusionsTmp[attrName] = {}
+            for val in attrValues
+                state.exclusionsTmp[attrName][val] = isExcluded
+            $(".pvtFilter").prop("checked", !isExcluded)
+
+            state
+
         try
             # do a first pass on the data to cache a materialized copy of any
             # function-valued inputs and to compute dimension cardinalities
@@ -923,6 +933,7 @@ callWithJQuery ($) ->
             shownInDragDrop = (c for c in shownAttributes when c not in opts.hiddenFromDragDrop)
 
 
+            # ASKME what is the usecase of unusedAttrsVertical? why add unnecessary complexity?
             unusedAttrsVerticalAutoOverride = false
             if opts.unusedAttrsVertical == "auto"
                 unusedAttrsVerticalAutoCutoff = 120 # legacy support
