@@ -34,8 +34,11 @@ const makeJs = () => {
 };
 
 const inc = (importance) => {
-  return src(["./package.json", "./bower.json", "./pivottable.jquery.json"])
+  // get all the files to bump version in
+  return src(["./package.json", "./bower.json"])
+    // bump the version number in those files
     .pipe(bump({ type: importance }))
+    // save it back to filesystem
     .pipe(dest("./"));
 };
 
@@ -51,7 +54,7 @@ const push = (done) => {
 };
 
 const tag = () => {
-  return src(["./package.json", "./bower.json", "./pivottable.jquery.json"])
+  return src(["./package.json", "./bower.json"])
     .pipe(git.commit("version bump"))
     .pipe(filter("package.json"))
     .pipe(tagVersion());
