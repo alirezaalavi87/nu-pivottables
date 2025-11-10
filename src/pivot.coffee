@@ -1,3 +1,7 @@
+# ASKME what does inclusions do? I understand its the opposite of exclusions but what is the use case?
+# FIXME the css attribute of a filtered attribute, will not be applied when restoring a table from cookie.
+#-The fact that a attribute is filtered or not should be *computed* based on opts.exclusions and applied to the UI
+
 callWithJQuery = (pivotModule) ->
     if typeof exports is "object" and typeof module is "object" # CommonJS
         pivotModule require("jquery")
@@ -8,7 +12,6 @@ callWithJQuery = (pivotModule) ->
         pivotModule jQuery
 
 callWithJQuery ($) ->
-
     ###
     Utilities
     ###
@@ -289,9 +292,9 @@ callWithJQuery ($) ->
 
     getSort = (sorters, attr) ->
         if sorters?
-            if $.isFunction(sorters)
+            if typeof sorters is "function"
                 sort = sorters(attr)
-                return sort if $.isFunction(sort)
+                return sort if typeof sort is "function"
             else if sorters[attr]?
                 return sorters[attr]
         return naturalSort
@@ -335,10 +338,10 @@ callWithJQuery ($) ->
                     f(record)
 
             #if it's a function, have it call us back
-            if $.isFunction(input)
+            if typeof input is "function"
                 input(addRecord)
-            else if $.isArray(input)
-                if $.isArray(input[0]) #array of arrays
+            else if Array.isArray(input)
+                if Array.isArray(input[0]) #array of arrays
                     for own i, compactRecord of input when i > 0
                         record = {}
                         record[k] = compactRecord[j] for own j, k of input[0]
@@ -664,11 +667,15 @@ callWithJQuery ($) ->
             hiddenAttributes: []
             hiddenFromAggregators: []
             hiddenFromDragDrop: []
-            menuLimit: 500
-            cols: [], rows: [], vals: []
-            rowOrder: "key_a_to_z", colOrder: "key_a_to_z"
+            menuLimit: 5000
+            cols: []
+            rows: []
+            vals: []
+            rowOrder: "key_a_to_z"
+            colOrder: "key_a_to_z"
             dataClass: PivotData
             exclusions: {}
+            exclusionsTmp: {}
             inclusions: {}
             unusedAttrsVertical: 85
             autoSortUnusedAttrs: false
@@ -687,6 +694,203 @@ callWithJQuery ($) ->
             opts = $.extend(true, {}, localeDefaults, $.extend({}, defaults, inputOpts))
         else
             opts = existingOpts
+
+        ###
+        Utilities
+        ###
+
+        ###
+        ACTION
+        renders the attributes' values box
+        ###
+        renderAttrValuesBox = (state, {attrName, attrValues, attrElem}) ->
+            values = (v for v of attrValues[attrName])
+            valuesBox = $("<dialog>")
+                .attr("closedby", "any")
+                .addClass('pvtAttrValuesBox')
+                .on "close", ->
+                    hideAttrValuesBox()
+            toolbar = $("<div>")
+                .addClass("toolbar")
+            updateBtn = $("<button>", {type: "button"})
+                .addClass("btn btn--confirm")
+                .text(state.localeStrings.apply)
+                .on "click", ->
+                    # Mutate the state with updated filters
+                    state = updateFilters(state, {attrName, attrElem})
+                    await refreshAsync()
+                    hideAttrValuesBox()
+            toolbarShortcuts = $("<div>")
+                .addClass("toolbar__shortcuts")
+                .append(
+              $("<button class='btn'>", {type: "button"})
+                  .html(state.localeStrings.selectAll)
+                  .on "click", ->
+                    opts = filterAllAttrValues state, {attrName, attrValues: values, isExcluded: false}
+            )
+                .append(
+              $("<button class='btn'>", {type: "button"})
+                  .html(state.localeStrings.selectNone)
+                  .on "click", ->
+                     opts = filterAllAttrValues state, {attrName, attrValues: values, isExcluded: true}
+            )
+            pivotSearchInput = $("<input>", {
+                type: "text",
+                placeholder: state.localeStrings.filterResults,
+                class: "pvtSearch"
+                autofocus: true
+                dir: "auto"
+            })
+                .attr("autofocus", "true")
+                .attr("dir", "auto")
+                .on "keyup", ->
+                    filter = String($(this).val().toLowerCase()).trim()
+                    valuesBox.find(".pvtCheckContainer li")
+                        .each ->
+                            testString = $(this).text().toLowerCase().indexOf(filter)
+                            if testString isnt -1
+                                return $(this).show()
+                            else
+                                return $(this).hide()
+
+            boxTitle = $("<h4>")
+                .text("#{attrName} - (#{values.length})")
+
+            # Handle if menu entries are too large
+            if values.length > state.menuLimit
+                valuesBox.append(
+                  $("<p>").text(state.localeStrings.tooMany)
+                )
+                return valuesBox
+
+            valuesList = renderFilterList(values, attrValues, state, attrName)
+            # Assemble the UI
+            valuesBox.append toolbar, boxTitle
+            toolbar.append updateBtn, toolbarShortcuts
+            valuesBox.append $("<br>")
+            valuesBox.append pivotSearchInput, valuesList
+
+            valuesBox
+
+        ###
+        COMPUTATION
+        ###
+        renderFilterList = (values, attrValues, opts, attrName) ->
+            filterList = $("<ul>")
+                .addClass("pvtCheckContainer")
+            # Render Items
+            for value in values.sort(getSort(opts.sorters, attrName))
+                do(value) ->
+                    valueCount = attrValues[attrName][value]
+                    filterItem = $("<li>")
+                    # TODO also check for inclusions? (what are inclusions for?)
+                    isFilterItemExcluded = opts?.exclusions[attrName]?.hasOwnProperty(value) ? false
+#                    if opts.inclusions[attrName]
+#                        isFilterItemExcluded = (value not in opts.inclusions[attrName])
+#                    else if opts.exclusions[attrName]
+#                        isFilterItemExcluded = (value in opts.exclusions[attrName])
+                    $("<input>")
+                        .attr("type", "checkbox")
+                        .prop("checked", !isFilterItemExcluded)
+                        .data("filter", [attrName, value])
+                        .addClass("pvtFilter")
+                        .appendTo(filterItem)
+                        .on "change", ->
+                            isSelected = $(this).is(":checked")
+                            opts = updateFiltersTmp({attrName, value}, isSelected, opts)
+                    filterItem.append $("<span>").addClass("value").text(value)
+                    filterItem.append $("<span>").addClass("count").text("("+valueCount+")")
+                    filterList.append(filterItem)
+
+            filterList
+
+        ###
+        COMPUTATION
+        ###
+        hideAttrValuesBox = ->
+            $(".pvtAttrValuesBox").remove()
+
+        ###
+        ACTION
+        ###
+        # TODO I feel like showAttrValuesBox can be cleaner with it's parameters.
+        # Currently there is some argument drilling going on. Some say it can be better with state monads or currying but
+        #-I should look deeper into them
+        showAttrValuesBox = (opts, {attrName, anchorSelector = ".pvtUi", attrValues, attrElem}) ->
+            isBoxOpen = $(".pvtAttrValuesBox").length > 0
+            # Close previous boxes if open
+            if isBoxOpen then hideAttrValuesBox()
+
+            anchorEl = $(anchorSelector)
+            if not anchorEl?
+                throw "Element with selector #{anchorSelector} was not found to attach the attrValuesBox to"
+            valuesBox = renderAttrValuesBox(opts, {attrName, attrValues, attrElem})
+            valuesBox.find(".pvtSearch").val("")
+            anchorEl.prepend(valuesBox) #Add valuesBox to DOM on the specified anchor
+            valuesBox[0].showModal()
+
+        ###
+        COMPUTATION
+        ###
+        updateFiltersTmp = ({attrName, value}, isSelected, state) ->
+            # If attr doesn't exist, create i in exclusionsTmp
+            if not state.exclusionsTmp[attrName]
+                state.exclusionsTmp[attrName] = {}
+            state.exclusionsTmp[attrName][value] = !isSelected
+
+            state
+
+        ###
+        COMPUTATION
+        ###
+        updateFilters = (state, {attrName, attrElem}) ->
+            state.exclusions = mergeFilters state.exclusions, state.exclusionsTmp
+            state.exclusionsTmp = {} # Empty the temporary exclusions after the merge
+            # Update the CSS of the attribute item with exclusions
+            if  Object.prototype.hasOwnProperty.call(opts.exclusions, attrName)
+                attrElem.addClass("pvtFilteredAttribute")
+            else
+                attrElem.removeClass "pvtFilteredAttribute"
+
+            state
+
+        ###
+        COMPUTATION
+        ###
+        mergeFilters = (mainFilters, tmpFilters) ->
+            if !mainFilters or !tmpFilters
+                throw new TypeError(
+                  "provide valid filter objects. filters must be of structure: {obj: {foo: boolean}}",
+                );
+            mergedFilters = mainFilters
+            newAttrs = Object.keys tmpFilters
+            newAttrs.forEach((attr) =>
+                attrValues = Object.keys(tmpFilters[attr])
+                #If attr doesn't exist, create it in exclusions
+                if !mergedFilters[attr]
+                    mergedFilters[attr] = {}
+                attrValues.forEach((value) =>
+                    isValueExcluded = tmpFilters[attr][value]
+                    # If value is should not excluded, remove it from exclusions
+                    if !isValueExcluded
+                        delete mergedFilters[attr][value]
+                        return
+                    # If value should be excluded, add it to exclusions
+                    mergedFilters[attr][value] = isValueExcluded
+                )
+                # Remove empty attrs
+                if !Object.keys(mergedFilters[attr]).length
+                    delete mergedFilters[attr]
+            )
+            mergedFilters
+
+        filterAllAttrValues = (state, {attrName, attrValues, isExcluded}) ->
+            state.exclusionsTmp[attrName] = {}
+            for val in attrValues
+                state.exclusionsTmp[attrName][val] = isExcluded
+            $(".pvtFilter").prop("checked", !isExcluded)
+
+            state
 
         try
             # do a first pass on the data to cache a materialized copy of any
@@ -717,18 +921,19 @@ callWithJQuery ($) ->
             renderer = $("<select>")
                 .addClass('pvtRenderer')
                 .appendTo(rendererControl)
-                .bind "change", -> refresh() #capture reference
+                .on "change", -> refresh() #capture reference
             for own x of opts.renderers
                 $("<option>").val(x).html(x).appendTo(renderer)
 
 
             #axis list, including the double-click menu
-            unused = $("<td>").addClass('pvtAxisContainer pvtUnused pvtUiCell')
+            unusedAttrs = $("<td>").addClass('pvtAxisContainer pvtUnused pvtUiCell')
             shownAttributes = (a for a of attrValues when a not in opts.hiddenAttributes)
             shownInAggregators = (c for c in shownAttributes when c not in opts.hiddenFromAggregators)
             shownInDragDrop = (c for c in shownAttributes when c not in opts.hiddenFromDragDrop)
 
 
+            # ASKME what is the usecase of unusedAttrsVertical? why add unnecessary complexity?
             unusedAttrsVerticalAutoOverride = false
             if opts.unusedAttrsVertical == "auto"
                 unusedAttrsVerticalAutoCutoff = 120 # legacy support
@@ -741,129 +946,28 @@ callWithJQuery ($) ->
                 unusedAttrsVerticalAutoOverride = attrLength > unusedAttrsVerticalAutoCutoff
 
             if opts.unusedAttrsVertical == true or unusedAttrsVerticalAutoOverride
-                unused.addClass('pvtVertList')
+                unusedAttrs.addClass('pvtVertList')
             else
-                unused.addClass('pvtHorizList')
+                unusedAttrs.addClass('pvtHorizList')
 
+            # Render attribute elements
             for own i, attr of shownInDragDrop
-                do (attr) ->
-                    values = (v for v of attrValues[attr])
-                    hasExcludedItem = false
-                    valueList = $("<div>").addClass('pvtFilterBox').hide()
-
-                    valueList.append $("<h4>").append(
-                        $("<span>").text(attr),
-                        $("<span>").addClass("count").text("(#{values.length})"),
-                        )
-                    if values.length > opts.menuLimit
-                        valueList.append $("<p>").html(opts.localeStrings.tooMany)
-                    else
-                        if values.length > 5
-                            controls = $("<p>").appendTo(valueList)
-                            sorter = getSort(opts.sorters, attr)
-                            placeholder = opts.localeStrings.filterResults
-                            $("<input>", {type: "text"}).appendTo(controls)
-                                .attr({placeholder: placeholder, class: "pvtSearch"})
-                                .bind "keyup", ->
-                                    filter = $(this).val().toLowerCase().trim()
-                                    accept_gen = (prefix, accepted) -> (v) ->
-                                        real_filter = filter.substring(prefix.length).trim()
-                                        return true if real_filter.length == 0
-                                        return Math.sign(sorter(v.toLowerCase(), real_filter)) in accepted
-                                    accept =
-                                        if      filter.indexOf(">=") == 0 then accept_gen(">=", [1,0])
-                                        else if filter.indexOf("<=") == 0 then accept_gen("<=", [-1,0])
-                                        else if filter.indexOf(">") == 0  then accept_gen(">",  [1])
-                                        else if filter.indexOf("<") == 0  then accept_gen("<",  [-1])
-                                        else if filter.indexOf("~") == 0  then (v) ->
-                                                return true if filter.substring(1).trim().length == 0
-                                                v.toLowerCase().match(filter.substring(1))
-                                        else (v) -> v.toLowerCase().indexOf(filter) != -1
-
-                                    valueList.find('.pvtCheckContainer p label span.value').each ->
-                                        if accept($(this).text())
-                                            $(this).parent().parent().show()
-                                        else
-                                            $(this).parent().parent().hide()
-                            controls.append $("<br>")
-                            $("<button>", {type:"button"}).appendTo(controls)
-                                .html(opts.localeStrings.selectAll)
-                                .bind "click", ->
-                                    valueList.find("input:visible:not(:checked)")
-                                        .prop("checked", true).toggleClass("changed")
-                                    return false
-                            $("<button>", {type:"button"}).appendTo(controls)
-                                .html(opts.localeStrings.selectNone)
-                                .bind "click", ->
-                                    valueList.find("input:visible:checked")
-                                        .prop("checked", false).toggleClass("changed")
-                                    return false
-
-                        checkContainer = $("<div>").addClass("pvtCheckContainer").appendTo(valueList)
-
-                        for value in values.sort(getSort(opts.sorters, attr))
-                             valueCount = attrValues[attr][value]
-                             filterItem = $("<label>")
-                             filterItemExcluded = false
-                             if opts.inclusions[attr]
-                                filterItemExcluded = (value not in opts.inclusions[attr])
-                             else if opts.exclusions[attr]
-                                filterItemExcluded = (value in opts.exclusions[attr])
-                             hasExcludedItem ||= filterItemExcluded
-                             $("<input>")
-                                .attr("type", "checkbox").addClass('pvtFilter')
-                                .attr("checked", !filterItemExcluded).data("filter", [attr,value])
-                                .appendTo(filterItem)
-                                .bind "change", -> $(this).toggleClass("changed")
-                             filterItem.append $("<span>").addClass("value").text(value)
-                             filterItem.append $("<span>").addClass("count").text("("+valueCount+")")
-                             checkContainer.append $("<p>").append(filterItem)
-
-                    closeFilterBox = ->
-                        if valueList.find("[type='checkbox']").length >
-                               valueList.find("[type='checkbox']:checked").length
-                                attrElem.addClass "pvtFilteredAttribute"
-                            else
-                                attrElem.removeClass "pvtFilteredAttribute"
-
-                            valueList.find('.pvtSearch').val('')
-                            valueList.find('.pvtCheckContainer p').show()
-                            valueList.hide()
-
-                    finalButtons = $("<p>").appendTo(valueList)
-
-                    if values.length <= opts.menuLimit
-                        $("<button>", {type: "button"}).text(opts.localeStrings.apply)
-                            .appendTo(finalButtons).bind "click", ->
-                                if valueList.find(".changed").removeClass("changed").length
-                                    refresh()
-                                closeFilterBox()
-
-                    $("<button>", {type: "button"}).text(opts.localeStrings.cancel)
-                        .appendTo(finalButtons).bind "click", ->
-                            valueList.find(".changed:checked")
-                                .removeClass("changed").prop("checked", false)
-                            valueList.find(".changed:not(:checked)")
-                                .removeClass("changed").prop("checked", true)
-                            closeFilterBox()
-
+                do(attr) ->
                     triangleLink = $("<span>").addClass('pvtTriangle')
-                        .html(" &#x25BE;").bind "click", (e) ->
-                            {left, top} = $(e.currentTarget).position()
-                            valueList.css(left: left+10, top: top+10).show()
-
+                        .html(" &#x25BE;")
+                        .on "click", ->
+                            showAttrValuesBox(opts, {attrName: attr, attrValues, attrElem})
                     attrElem = $("<li>").addClass("axis_#{i}")
                         .append $("<span>").addClass('pvtAttr').text(attr).data("attrName", attr).append(triangleLink)
 
-                    attrElem.addClass('pvtFilteredAttribute') if hasExcludedItem
-                    unused.append(attrElem).append(valueList)
+                    unusedAttrs.append(attrElem)
 
             tr1 = $("<tr>").appendTo(uiTable)
 
             #aggregator menu and value area
 
             aggregator = $("<select>").addClass('pvtAggregator')
-                .bind "change", -> refresh() #capture reference
+                .on "change", -> refresh() #capture reference
             for own x of opts.aggregators
                 aggregator.append $("<option>").val(x).html(x)
 
@@ -874,14 +978,14 @@ callWithJQuery ($) ->
 
             rowOrderArrow = $("<a>", role: "button").addClass("pvtRowOrder")
                 .data("order", opts.rowOrder).html(ordering[opts.rowOrder].rowSymbol)
-                .bind "click", ->
+                .on "click", ->
                     $(this).data("order", ordering[$(this).data("order")].next)
                     $(this).html(ordering[$(this).data("order")].rowSymbol)
                     refresh()
 
             colOrderArrow = $("<a>", role: "button").addClass("pvtColOrder")
                 .data("order", opts.colOrder).html(ordering[opts.colOrder].colSymbol)
-                .bind "click", ->
+                .on "click", ->
                     $(this).data("order", ordering[$(this).data("order")].next)
                     $(this).html(ordering[$(this).data("order")].colSymbol)
                     refresh()
@@ -910,9 +1014,9 @@ callWithJQuery ($) ->
             #finally the renderer dropdown and unused attribs are inserted at the requested location
             if opts.unusedAttrsVertical == true or unusedAttrsVerticalAutoOverride
                 uiTable.find('tr:nth-child(1)').prepend rendererControl
-                uiTable.find('tr:nth-child(2)').prepend unused
+                uiTable.find('tr:nth-child(2)').prepend unusedAttrs
             else
-                uiTable.prepend $("<tr>").append(rendererControl).append(unused)
+                uiTable.prepend $("<tr>").append(rendererControl).append(unusedAttrs)
 
             #render the UI in its default state
             @html uiTable
@@ -959,7 +1063,7 @@ callWithJQuery ($) ->
                         newDropdown = $("<select>")
                             .addClass('pvtAttrDropdown')
                             .append($("<option>"))
-                            .bind "change", -> refresh()
+                            .on "change", -> refresh()
                         for attr in shownInAggregators
                             newDropdown.append($("<option>").val(attr).text(attr))
                         pvtVals.append(newDropdown)
@@ -978,28 +1082,14 @@ callWithJQuery ($) ->
                 subopts.renderer = opts.renderers[renderer.val()]
                 subopts.rowOrder = rowOrderArrow.data("order")
                 subopts.colOrder = colOrderArrow.data("order")
-                #construct filter here
-                exclusions = {}
-                @find('input.pvtFilter').not(':checked').each ->
-                    filter = $(this).data("filter")
-                    if exclusions[filter[0]]?
-                        exclusions[filter[0]].push( filter[1] )
-                    else
-                        exclusions[filter[0]] = [ filter[1] ]
-                #include inclusions when exclusions present
-                inclusions = {}
-                @find('input.pvtFilter:checked').each ->
-                    filter = $(this).data("filter")
-                    if exclusions[filter[0]]?
-                        if inclusions[filter[0]]?
-                            inclusions[filter[0]].push( filter[1] )
-                        else
-                            inclusions[filter[0]] = [ filter[1] ]
 
                 subopts.filter = (record) ->
                     return false if not opts.filter(record)
-                    for k,excludedItems of exclusions
-                        return false if ""+(record[k] ? 'null') in excludedItems
+                    for k,excludedItems of opts.exclusions
+                        # Check if any of the attribute values of the record matches any of the excluded attributes
+                        for attr of excludedItems
+                            if record[k] == attr && excludedItems[attr]
+                                return false
                     return true
 
                 pivotTable.pivot(materializedInput,subopts)
@@ -1009,9 +1099,7 @@ callWithJQuery ($) ->
                     colOrder: subopts.colOrder
                     rowOrder: subopts.rowOrder
                     vals: vals
-                    exclusions: exclusions
-                    inclusions: inclusions
-                    inclusionsInfo: inclusions #duplicated for backwards-compatibility
+                    inclusionsInfo: opts.inclusions #duplicated for backwards-compatibility
                     aggregatorName: aggregator.val()
                     rendererName: renderer.val()
 
@@ -1030,6 +1118,13 @@ callWithJQuery ($) ->
             refresh = =>
                 pivotTable.css("opacity", 0.5)
                 setTimeout refreshDelayed, 10
+
+            refreshAsync = =>
+                pivotTable.css("opacity", 0.5)
+                return new Promise (resolve) ->
+                    setTimeout (->
+                        refreshDelayed()
+                        resolve()), 10
 
             #the very first refresh will actually display the table
             refresh()
