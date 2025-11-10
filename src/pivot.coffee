@@ -714,7 +714,7 @@ callWithJQuery ($) ->
                 .addClass("toolbar")
             updateBtn = $("<button>", {type: "button"})
                 .addClass("btn btn--confirm")
-                .text("CONFIRM")
+                .text(state.localeStrings.apply)
                 .on "click", ->
                     # Mutate the state with updated filters
                     state = updateFilters(state, {attrName, attrElem})
