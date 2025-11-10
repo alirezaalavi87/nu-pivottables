@@ -1,5 +1,16 @@
 [![npm](https://pivottable.js.org/images/npm.svg)](https://www.npmjs.com/package/pivottable) [![cdnjs](https://pivottable.js.org/images/cdnjs.svg)](https://cdnjs.com/libraries/pivottable) [![tests](https://pivottable.js.org/images/tests.svg)](https://pivottable.js.org/tests/) [![license](https://pivottable.js.org/images/license.svg)](https://github.com/nicolaskruchten/pivottable/blob/master/LICENSE.md)
 
+# Improvements over upstream 🚀
+- Conditional rendering of attribute filters dialog -> much better performance, no more 500 limit on attribute values
+- Updated dependencies (such as):
+    jQuery -> v4
+    gulp -> v5
+    updated gulpfile
+- Refactor code for more modularity and aligning with FP standards
+- Farsi(Persian) localization
+- [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
+- [ ] Support BiDi text
+- [ ] SVG,PNG and Excel exports
 
 # PivotTable.js
 
