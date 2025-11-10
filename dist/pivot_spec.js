@@ -8,14 +8,17 @@
       name: "Nick",
       "colour": "red",
       "age": 34
-    }, {
+    },
+    {
       name: "Jane",
       "gender": "female"
-    }, {
+    },
+    {
       name: "John",
       "gender": "male",
       "age": 12
-    }, {
+    },
+    {
       name: "Jim",
       "gender": null,
       "age": 12
@@ -153,8 +156,8 @@
       });
     });
     describe("with rows/cols, sum aggregator, derivedAttributes, filter and sorters", function() {
-      var aggregators, derivers, ref, sortAs, table;
-      ref = $.pivotUtilities, sortAs = ref.sortAs, derivers = ref.derivers, aggregators = ref.aggregators;
+      var aggregators, derivers, sortAs, table;
+      ({sortAs, derivers, aggregators} = $.pivotUtilities);
       table = $("<div>").pivot(fixtureData, {
         rows: ["gender"],
         cols: ["birthyear"],
@@ -178,7 +181,7 @@
     });
     describe("with rows/cols, fraction-of aggregator", function() {
       var aggregators, table;
-      aggregators = $.pivotUtilities.aggregators;
+      ({aggregators} = $.pivotUtilities);
       table = $("<div>").pivot(fixtureData, {
         rows: ["gender"],
         aggregator: aggregators["Sum as Fraction of Total"](["trials"])
@@ -270,7 +273,8 @@
           {
             a: 1,
             b: 2
-          }, {
+          },
+          {
             a: 3,
             b: 4
           }
@@ -285,9 +289,11 @@
         raggedAosInput = [
           {
             a: 1
-          }, {
+          },
+          {
             b: 4
-          }, {
+          },
+          {
             a: 3,
             b: 2
           }
@@ -316,7 +322,15 @@
       });
       describe("with jQuery table element input", function() {
         var pd, tableInput;
-        tableInput = $("<table>\n    <thead>\n        <tr> <th>a</th><th>b</th> </tr>\n    </thead>\n    <tbody>\n        <tr> <td>1</td> <td>2</td> </tr>\n        <tr> <td>3</td> <td>4</td> </tr>\n    </tbody>\n</table>");
+        tableInput = $(`<table>
+    <thead>
+        <tr> <th>a</th><th>b</th> </tr>
+    </thead>
+    <tbody>
+        <tr> <td>1</td> <td>2</td> </tr>
+        <tr> <td>3</td> <td>4</td> </tr>
+    </tbody>
+</table>`);
         pd = new $.pivotUtilities.PivotData(tableInput, sumOverSumOpts);
         return it("has the correct grand total value", function() {
           return expect(pd.getAggregator([], []).value()).toBe((1 + 3) / (2 + 4));
@@ -384,9 +398,7 @@
       var getVal, tpl;
       getVal = function(aggregator) {
         var pd;
-        pd = new $.pivotUtilities.PivotData(fixtureData, {
-          aggregator: aggregator
-        });
+        pd = new $.pivotUtilities.PivotData(fixtureData, {aggregator});
         return pd.getAggregator([], []).value();
       };
       tpl = $.pivotUtilities.aggregatorTemplates;
@@ -456,7 +468,7 @@
       });
       describe(".var", function() {
         return it("works", function() {
-          return expect(getVal(tpl["var"]()(['trials']))).toBe(48.666666666666686);
+          return expect(getVal(tpl.var()(['trials']))).toBe(48.666666666666686);
         });
       });
       describe(".stdev", function() {
