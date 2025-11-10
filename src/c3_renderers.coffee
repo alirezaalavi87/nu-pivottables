@@ -91,6 +91,7 @@ callWithJQuery ($, c3) ->
             titleText += " #{opts.localeStrings.by} #{groupByTitle}" if groupByTitle != ""
 
         title = $("<p>", {style: "text-align: center; font-weight: bold"})
+        title.attr("dir", "auto")
         title.text(titleText)
 
         formatter = pivotData.getAggregator([], []).format

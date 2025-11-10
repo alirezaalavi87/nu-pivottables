@@ -157,6 +157,7 @@
         title = $("<p>", {
           style: "text-align: center; font-weight: bold"
         });
+        title.attr("dir", "auto");
         title.text(titleText);
         formatter = pivotData.getAggregator([], []).format;
         params = {
