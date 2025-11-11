@@ -30,8 +30,10 @@
       var table;
       table = null;
       beforeEach(function(done) {
-        return table = $("<div>").pivotUI(fixtureData, {
-          onRefresh: done
+        table = $("<div>").pivotUI(fixtureData, {
+          onRefresh: function() {
+            return done();
+          }
         });
       });
       it("has all the basic UI elements", function(done) {
@@ -41,13 +43,13 @@
         expect(table.find("select.pvtRenderer").length).toBe(1);
         expect(table.find("select.pvtAggregator").length).toBe(1);
         expect(table.find("span.pvtAttr").length).toBe(6);
-        return done();
+        done();
       });
       it("reflects its inputs", function(done) {
         expect(table.find("td.pvtUnused span.pvtAttr").length).toBe(6);
         expect(table.find("select.pvtRenderer").val()).toBe("Table");
         expect(table.find("select.pvtAggregator").val()).toBe("Count");
-        return done();
+        done();
       });
       it("renders a table", function(done) {
         expect(table.find("table.pvtTable").length).toBe(1);
@@ -80,7 +82,9 @@
           aggregatorName: "Sum over Sum",
           vals: ["successes", "trials"],
           rendererName: "Heatmap",
-          onRefresh: done
+          onRefresh: function() {
+            return done();
+          }
         });
       });
       it("has all the basic UI elements", function(done) {
