@@ -18,7 +18,8 @@ describe "$.pivotUI()", ->
         table = null
 
         beforeEach (done) ->
-            table = $("<div>").pivotUI fixtureData, onRefresh: done
+            table = $("<div>").pivotUI fixtureData, onRefresh: -> done()
+            return
         it "has all the basic UI elements", (done) ->
             expect table.find("td.pvtAxisContainer").length
             .toBe  3
@@ -33,6 +34,7 @@ describe "$.pivotUI()", ->
             expect table.find("span.pvtAttr").length
             .toBe  6
             done()
+            return
 
         it "reflects its inputs", (done) ->
             expect table.find("td.pvtUnused span.pvtAttr").length
@@ -42,6 +44,7 @@ describe "$.pivotUI()", ->
             expect table.find("select.pvtAggregator").val()
             .toBe  "Count"
             done()
+            return
 
         it "renders a table", (done) ->
             expect table.find("table.pvtTable").length
@@ -78,7 +81,7 @@ describe "$.pivotUI()", ->
                 aggregatorName: "Sum over Sum"
                 vals: ["successes", "trials"]
                 rendererName: "Heatmap"
-                onRefresh: done
+                onRefresh: -> done()
 
         it "has all the basic UI elements", (done) ->
             expect table.find("td.pvtAxisContainer").length
