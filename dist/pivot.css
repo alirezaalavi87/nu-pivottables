@@ -23,7 +23,7 @@
     --color__on-surface: #323233;
     --color__surface-variant: #f4eff7;
     --color__on-surface-variant: #000000;
-    --color__outline: #8e8999;
+    --color__outline: #8e899940;
     --color__primary-dark: #c0b1e6;
     --color__on-primary-dark: #30254c;
     --color__primary-container-dark: #403266;
@@ -71,8 +71,10 @@ table.pvtTable {
     font-family: arial, system-ui;
     font-size: 10pt;
     text-align: left;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     border: 1px solid var(--color__outline);
+    background-color: var(--color__surface);
 }
 table.pvtTable tr th,
 table.pvtTable tr th {
@@ -97,7 +99,6 @@ table.pvtTable .pvtTotalLabel {
 
 table.pvtTable tr td {
     padding: 5px;
-    background-color: var(--color__surface);
     border: 1px solid var(--color__outline);
     vertical-align: top;
     text-align: center;
@@ -263,7 +264,7 @@ button,
     width: 300px;
     background-color: var(--color__surface);
     position: fixed;
-    padding: 1em;
+    padding: 0 1em 1em 1em;
     text-align: center;
     border: 1px solid var(--color__outline);
     border-radius: 1em;
@@ -327,4 +328,21 @@ button,
 .pvtAxisContainer.pvtUnused.pvtUiCell.pvtVertList {
     display: table-cell;
     vertical-align: top;
+}
+
+.pvtTable thead {
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.pvtTable tbody th {
+    position: sticky;
+    position: -webkit-sticky;
+    /* width: 100px; */
+    /* min-width: 100px; */
+    /* max-width: 100px; */
+    left: 0px;
+    z-index: 1;
 }
