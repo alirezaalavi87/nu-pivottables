@@ -64,9 +64,9 @@ const bumpPatch = () => inc("patch");
 const bumpMinor = () => inc("minor");
 const bumpMajor = () => inc("major");
 
-const patch = series(bumpPatch, parallel(makeJs, makeCss), tag, publish, push);
-const minor = series(bumpMinor, parallel(makeJs, makeCss), tag, publish, push);
-const major = series(bumpMajor, parallel(makeJs, makeCss), tag, publish, push);
+const patch = series(bumpPatch, parallel(makeJs, makeCss), tag, /*publish,*/ push);
+const minor = series(bumpMinor, parallel(makeJs, makeCss), tag, /*publish,*/ push);
+const major = series(bumpMajor, parallel(makeJs, makeCss), tag, /*publish,*/ push);
 
 const watchFiles = () => {
   watch(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"], makeJs);
