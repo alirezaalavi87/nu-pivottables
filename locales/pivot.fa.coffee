@@ -55,5 +55,3 @@ callWithJQuery ($) ->
       "نقشه گرمایشی":                   $.pivotUtilities.renderers["Heatmap"]
       "نقشه گرمایشی سطری":         $.pivotUtilities.renderers["Row Heatmap"]
       "نقشه گرمایشی ستونی":       $.pivotUtilities.renderers["Col Heatmap"]
-
-
