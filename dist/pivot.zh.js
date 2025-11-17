@@ -1,12 +1,14 @@
 (function() {
+  // example: http://zhoulvjun.github.io/2016/02/08/pivottable/
   var callWithJQuery;
 
   callWithJQuery = function(pivotModule) {
-    if (typeof exports === "object" && typeof module === "object") {
+    if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"));
-    } else if (typeof define === "function" && define.amd) {
+    } else if (typeof define === "function" && define.amd) { // AMD
       return define(["jquery"], pivotModule);
     } else {
+      // Plain browser env
       return pivotModule(jQuery);
     }
   };
@@ -56,7 +58,7 @@
         "求和后取整": tpl.sum(frFmtInt),
         "平均值": tpl.average(frFmt),
         "中位数": tpl.median(frFmt),
-        "方差": tpl["var"](1, frFmt),
+        "方差": tpl.var(1, frFmt),
         "样本标准偏差": tpl.stdev(1, frFmt),
         "最小值": tpl.min(frFmt),
         "最大值": tpl.max(frFmt),
