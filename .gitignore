@@ -6,7 +6,3 @@ Rdatasets
 composer.lock
 
 yarn.lock
-dist/*.js.map
-dist/*.min.css
-dist/*.min.js
-dist/*.min.js.map
