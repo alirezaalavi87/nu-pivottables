@@ -16,8 +16,8 @@ callWithJQuery ($, c3) ->
 
         opts = $.extend(true, {}, defaults, opts)
         opts.c3.size ?= {}
-        opts.c3.size.width ?= window.innerWidth / 1.4
-        opts.c3.size.height ?= window.innerHeight / 1.4 - 50
+        opts.c3.size.width ?= window.innerWidth
+        opts.c3.size.height ?= window.innerHeight
         chartOpts.type ?= "line"
         chartOpts.horizontal ?= false
         chartOpts.stacked ?= false

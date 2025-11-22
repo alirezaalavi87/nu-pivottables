@@ -29,10 +29,10 @@
           base.size = {};
         }
         if ((base1 = opts.c3.size).width == null) {
-          base1.width = window.innerWidth / 1.4;
+          base1.width = window.innerWidth;
         }
         if ((base2 = opts.c3.size).height == null) {
-          base2.height = window.innerHeight / 1.4 - 50;
+          base2.height = window.innerHeight;
         }
         if (chartOpts.type == null) {
           chartOpts.type = "line";
