@@ -1,7 +1,7 @@
-(function() {
+(function () {
   var callWithJQuery;
 
-  callWithJQuery = function(pivotModule) {
+  callWithJQuery = function (pivotModule) {
     if (typeof exports === "object" && typeof module === "object") { // CommonJS
       return pivotModule(require("jquery"));
     } else if (typeof define === "function" && define.amd) { // AMD
@@ -12,25 +12,25 @@
     }
   };
 
-  callWithJQuery(function($) {
+  callWithJQuery(function ($) {
     var frFmt, frFmtInt, frFmtPct, nf, tpl;
     nf = $.pivotUtilities.numberFormat;
     tpl = $.pivotUtilities.aggregatorTemplates;
     frFmt = nf({
       thousandsSep: " ",
-      decimalSep: "."
+      decimalSep: ".",
     });
     frFmtInt = nf({
       digitsAfterDecimal: 0,
       thousandsSep: " ",
-      decimalSep: "."
+      decimalSep: ".",
     });
     frFmtPct = nf({
       digitsAfterDecimal: 1,
       scaler: 100,
       suffix: "٪",
       thousandsSep: " ",
-      decimalSep: "."
+      decimalSep: ".",
     });
     return $.pivotUtilities.locales.fa = {
       localeStrings: {
@@ -45,7 +45,8 @@
         cancel: "انصراف",
         totals: "مجموع",
         vs: "در مقابل",
-        by: "بر حسب"
+        by: "بر حسب",
+        exportXLSX: "گرفتن خروجی XLSX",
       },
       aggregators: {
         "تعداد": tpl.count(frFmtInt),
@@ -62,20 +63,31 @@
         "مجموع به نسبت کل": tpl.fractionOf(tpl.sum(), "total", frFmtPct),
         "مجموع به نسبت سطر ها": tpl.fractionOf(tpl.sum(), "row", frFmtPct),
         "مجموع به نسبت ستون ها": tpl.fractionOf(tpl.sum(), "col", frFmtPct),
-        "تعداد به عنوان کسری از کل": tpl.fractionOf(tpl.count(), "total", frFmtPct),
-        "تعداد به عنوان کسری از سطرها": tpl.fractionOf(tpl.count(), "row", frFmtPct),
-        "تعداد به عنوان کسری از ستون ها": tpl.fractionOf(tpl.count(), "col", frFmtPct)
+        "تعداد به عنوان کسری از کل": tpl.fractionOf(
+          tpl.count(),
+          "total",
+          frFmtPct,
+        ),
+        "تعداد به عنوان کسری از سطرها": tpl.fractionOf(
+          tpl.count(),
+          "row",
+          frFmtPct,
+        ),
+        "تعداد به عنوان کسری از ستون ها": tpl.fractionOf(
+          tpl.count(),
+          "col",
+          frFmtPct,
+        ),
       },
       renderers: {
         "جدول": $.pivotUtilities.renderers["Table"],
         "جدولِ نمودار میله ای": $.pivotUtilities.renderers["Table Barchart"],
         "نقشه گرمایشی": $.pivotUtilities.renderers["Heatmap"],
         "نقشه گرمایشی سطری": $.pivotUtilities.renderers["Row Heatmap"],
-        "نقشه گرمایشی ستونی": $.pivotUtilities.renderers["Col Heatmap"]
-      }
+        "نقشه گرمایشی ستونی": $.pivotUtilities.renderers["Col Heatmap"],
+      },
     };
   });
-
 }).call(this);
 
 //# sourceMappingURL=pivot.fa.js.map
