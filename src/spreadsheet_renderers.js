@@ -68,6 +68,10 @@ const columnsFromObjectInput = (input) => {
   }));
 };
 
+/**
+ * calculate the "values" for pivot table.
+ * @returns {string[]}
+ */
 const pivotValues = (pivotData) => {
   // NOTE this is just how nu-pivottables behaves (use the first row attribute or col attribute as pivot value)
   if (pivotData?.rowAttrs.length) {
@@ -80,6 +84,7 @@ const pivotValues = (pivotData) => {
 
 /**
  * Process the pivotData with the xlsxHandler and create XLSX file
+ * @returns {Promise<Blob>}
  */
 const createXLSXFile = async (xlsxHandler, pivotData) => {
   try {
