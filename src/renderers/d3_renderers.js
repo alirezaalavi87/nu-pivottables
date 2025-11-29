@@ -1,3 +1,4 @@
+// NOTE: this renderer is only compatible with D3.js v7
 /**
  * The default configurations of D3 renderer
  * @typedef {Object} D3defaults
@@ -241,7 +242,6 @@ const createD3Renderers = ($, d3) => {
       opts = $.extend(true, {}, defaults, opts);
 
       const treemapInputData = pivotDataToTreemapInput(pivotData);
-      console.log(treemapInputData);
       const treeMapData = createTreeMap(defaultTree, treemapInputData);
       const treeMap = renderTreeMap(
         treeMapData,
@@ -250,9 +250,6 @@ const createD3Renderers = ($, d3) => {
       );
       const treeMapUI = renderTreeMapUI(treeMap);
       return treeMapUI;
-      // } catch (err) {
-      //   console.error(err);
-      // }
     },
   };
   return renderers;
