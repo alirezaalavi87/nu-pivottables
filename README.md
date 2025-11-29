@@ -7,12 +7,15 @@
     gulp v2 -> v5
     updated gulpfile
     jasmine v2 -> v5
+    D3.js v4 -> v7
 - Refactor code for more modularity and aligning with FP standards
 - Farsi(Persian) localization
+- Write new code in modern FP javascript+jsDoc
 - [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
 - [ ] Support BiDi text
 - [ ] SVG,PNG and Excel exports
 - [ ] add CI/CD
+- [ ] add billboard.js renderer (C3js is not maintained and incompatible with D3 v7)
 
 # PivotTable.js
 
@@ -159,7 +162,7 @@ Pull requests are welcome! Here are some [Contribution Guidelines](https://githu
 
 ## I have a question, how can I get in touch?
 
-Please first check the [Frequently Asked Questions](https://github.com/nicolaskruchten/pivottable/wiki/Frequently-Asked-Questions) and if you can't find what you're looking for there, or in the [wiki](https://github.com/nicolaskruchten/pivottable/wiki), then please [create a GitHub Issue](https://github.com/nicolaskruchten/pivottable/issues/new). When creating an issue, please try to provide a replicable test case so that others can more easily help you. Please do not email the author directly, as you will just be asked to create a Github Issue :)
+Please first check the [Frequently Asked Questions](https://github.com/nicolaskruchten/pivottable/wiki/Frequently-Asked-Questions) and if you can't find what you're looking for there, or in the [wiki](https://github.com/nicolaskruchten/pivottable/wiki), then please [create a GitHub Issue](https://github.com/alirezaalavi87/nu-pivottables/issues). When creating an issue, please try to provide a replicable test case so that others can more easily help you. Please do not email the author directly, as you will just be asked to create a Github Issue :)
 
 ## Copyright & Licence (MIT License)
 
