@@ -13,7 +13,9 @@
 - Write new code in modern FP javascript+jsDoc
 - [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
 - [ ] Support BiDi text
-- [ ] SVG,PNG and Excel exports
+- [ ] Spreadsheet exports
+    - [x] XLSX export
+    - [ ] ODS export
 - [ ] add CI/CD
 - [ ] add billboard.js renderer (C3js is not maintained and incompatible with D3 v7)
 

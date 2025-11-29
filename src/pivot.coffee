@@ -641,7 +641,7 @@ callWithJQuery ($) ->
         try
             pivotData = new opts.dataClass(input, opts)
             try
-                result = opts.renderer(pivotData, opts.rendererOptions)
+                result = await opts.renderer(pivotData, opts.rendererOptions)
             catch e
                 console.error(e) if console?
                 result = $("<span>").html opts.localeStrings.renderError

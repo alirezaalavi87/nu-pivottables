@@ -1059,7 +1059,7 @@
     /*
     Pivot Table core: create PivotData object and call Renderer on it
     */
-    $.fn.pivot = function(input, inputOpts, locale = "en") {
+    $.fn.pivot = async function(input, inputOpts, locale = "en") {
       var defaults, e, localeDefaults, localeStrings, opts, pivotData, result, x;
       if (locales[locale] == null) {
         locale = "en";
@@ -1090,7 +1090,7 @@
       try {
         pivotData = new opts.dataClass(input, opts);
         try {
-          result = opts.renderer(pivotData, opts.rendererOptions);
+          result = (await opts.renderer(pivotData, opts.rendererOptions));
         } catch (error) {
           e = error;
           if (typeof console !== "undefined" && console !== null) {
