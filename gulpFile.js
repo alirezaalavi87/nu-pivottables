@@ -20,7 +20,7 @@ const makeCss = () => {
 };
 
 const makeJs = () => {
-  return src(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"])
+  return src(["./src/*.coffee", "./src/renderers/*.coffe", "./locales/*.coffee", "./tests/*.coffee"])
     .pipe(sourcemaps.init())
     .pipe(coffee()).on("error", console.error.bind(console))
     .pipe(sourcemaps.write("./"))
