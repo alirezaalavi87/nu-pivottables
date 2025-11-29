@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pivot Demo From Local CSV</title>
+    <!-- external libs from cdnjs -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.1-prerelease.0/exceljs.min.js"
+        integrity="sha512-ggd305P5+Cw/oOst5Mh0Zkm7tvNJmWsAcJV8d+VvOXO2UK7c89pCoRo/Pi/eNJvQeM1AG1M2ae5/6ETpTHFxsA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- PivotTable.js libs from ../dist -->
+    <link rel="stylesheet" type="text/css" href="../dist/pivot.css">
+    <script type="text/javascript" src="../dist/pivot.js"></script>
+    <script type="text/javascript" src="../dist/export_renderers.js"></script>
+    <script type="text/javascript" src="../src/spreadsheet_renderers.js"></script>
+
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: Verdana;
+            min-height: 95%;
+        }
+
+        #filechooser {
+            color: #555;
+            text-decoration: underline;
+            ;
+            cursor: pointer;
+            /* "hand" cursor */
+        }
+    </style>
+</head>
+
+<body class="whiteborder">
+    <script type="text/javascript">
+        $(function () {
+            var renderers = $.extend(
+                $.pivotUtilities.renderers,
+                $.pivotUtilities.spreadsheet_renderers,
+                $.pivotUtilities.export_renderers
+            );
+
+            var parseAndPivot = function (f) {
+                $("#output").html("<p align='center' style='color:grey;'>(processing...)</p>")
+                Papa.parse(f, {
+                    skipEmptyLines: true,
+                    error: function (e) {alert(e)},
+                    complete: function (parsed) {
+                        $("#output").pivotUI(parsed.data, {renderers: renderers}, true);
+                    }
+                });
+            };
+
+            $("#csv").on("change", function (event) {
+                parseAndPivot(event.target.files[0]);
+            });
+
+            $("#textarea").on("input change", function () {
+                parseAndPivot($("#textarea").val());
+            });
+
+            var dragging = function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                evt.originalEvent.dataTransfer.dropEffect = 'copy';
+                $("body").removeClass("whiteborder").addClass("greyborder");
+            };
+
+            var endDrag = function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                evt.originalEvent.dataTransfer.dropEffect = 'copy';
+                $("body").removeClass("greyborder").addClass("whiteborder");
+            };
+
+            var dropped = function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                $("body").removeClass("greyborder").addClass("whiteborder");
+                parseAndPivot(evt.originalEvent.dataTransfer.files[0]);
+            };
+
+            $("html")
+                .on("dragover", dragging)
+                .on("dragend", endDrag)
+                .on("dragexit", endDrag)
+                .on("dragleave", endDrag)
+                .on("drop", dropped);
+        });
+
+        /*
+        const Excel = ExcelJS;
+        const workbook = new Excel.Workbook();
+        const worksheet1 = workbook.addWorksheet('Sheet1');
+        console.log("worksheet1 before rows", worksheet1)
+        const objectInput = [
+            {foo: "a", bar: "b", baz: "c"},
+            {foo: "1", bar: "2", baz: "3"},
+            {foo: "4", bar: "5", baz: "6"},
+            {foo: "7", bar: "7", baz: "8"},
+        ];
+        const arrayInput = [
+            ['A', 'B', 'C', 'D', 'E'],
+            ['a1', 'b1', 'c1', 4, 5],
+            ['a1', 'b2', 'c1', 4, 5],
+            ['a2', 'b1', 'c2', 14, 24],
+            ['a2', 'b2', 'c2', 24, 35],
+            ['a3', 'b1', 'c3', 34, 45],
+            ['a3', 'b2', 'c3', 44, 45],
+        ];
+        worksheet1.columns = columnsFromObjectInput(objectInput);
+        worksheet1.addRows(objectInput);
+
+        const worksheet2 = workbook.addWorksheet('Sheet2');
+        worksheet2.addPivotTable({
+            // Source data: entire sheet range; header in first row
+            sourceSheet: worksheet1,
+            // Pivot table fields: via header row in `worksheet1`
+            rows: ['foo', 'bar'],
+            columns: ['baz'],
+            values: ['foo'], // Exactly 1 field
+            metric: 'sum', // Metric: 'sum' only
+        });
+
+        function downloadBuffer(buf) {
+            const blob = new Blob([buf], {type: 'application/octet-stream'});
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+
+            a.href = url;
+            a.download = 'example.xlsx'; // Specify the file name
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the URL.createObjectURL
+        }
+
+        //workbook.xlsx.writeBuffer().then((buffer) =>
+        //    document.getElementById("download-excel").addEventListener("click", downloadBuffer(buffer))
+        //)
+        */
+    </script>
+    <p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
+    <p align="center" style="line-height: 1.5">
+        Drop a CSV file on this page or
+        <label id="filechooser">click here to choose one<input id="csv" type="file" style="display:none" /></label>
+        <br /><br />
+        <textarea placeholder="or type or paste CSV text here" style="width: 300px;" id="textarea"></textarea>
+        <br />
+        <em><small>note: the data never leaves your browser!</small></em>
+    </p>
+
+    <a href="#" id="download-excel">download excel</a>
+
+    <div id="output" style="margin: 10px;"></div>
+
+</body>
+
+</html>
