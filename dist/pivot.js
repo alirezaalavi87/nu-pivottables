@@ -1094,14 +1094,14 @@
         } catch (error) {
           e = error;
           if (typeof console !== "undefined" && console !== null) {
-            console.error(e.stack);
+            console.error(e);
           }
           result = $("<span>").html(opts.localeStrings.renderError);
         }
       } catch (error) {
         e = error;
         if (typeof console !== "undefined" && console !== null) {
-          console.error(e.stack);
+          console.error(e);
         }
         result = $("<span>").html(opts.localeStrings.computeError);
       }
@@ -1682,7 +1682,7 @@
       } catch (error) {
         e = error;
         if (typeof console !== "undefined" && console !== null) {
-          console.error(e.stack);
+          console.error(e);
         }
         this.html(opts.localeStrings.uiRenderError);
       }
