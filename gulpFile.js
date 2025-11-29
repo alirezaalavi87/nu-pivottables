@@ -19,8 +19,13 @@ const makeCss = () => {
     .pipe(dest("./dist/"));
 };
 
-const makeJs = () => {
-  return src(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"])
+const processCoffeeScript = () => {
+  return src([
+    "./src/*.coffee",
+    "./src/renderers/*.coffee",
+    "./locales/*.coffee",
+    "./tests/*.coffee",
+  ])
     .pipe(sourcemaps.init())
     .pipe(coffee()).on("error", console.error.bind(console))
     .pipe(sourcemaps.write("./"))
@@ -30,8 +35,26 @@ const makeJs = () => {
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(uglify())
     .pipe(sourcemaps.write("./"))
-    .pipe(dest("./dist"));
+    .pipe(dest("./dist"))
+    .on("error", (err) => {
+      console.error("Error while processing coffeescirpt files: ", err);
+    });
 };
+
+const processPlainJs = () => {
+  return src([
+    "./src/**/*.js",
+  ]).pipe(sourcemaps.init())
+    .pipe(dest("./dist")) // copy original files to dist
+    .pipe(uglify())
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(dest("./dist"))
+    .on("error", (err) => {
+      console.error("Error while processing plain JS files: ", err);
+    });
+};
+
+const makeJs = parallel(processPlainJs, processCoffeeScript);
 
 const inc = (importance) => {
   // get all the files to bump version in
@@ -64,9 +87,24 @@ const bumpPatch = () => inc("patch");
 const bumpMinor = () => inc("minor");
 const bumpMajor = () => inc("major");
 
-const patch = series(bumpPatch, parallel(makeJs, makeCss), tag, /*publish,*/ push);
-const minor = series(bumpMinor, parallel(makeJs, makeCss), tag, /*publish,*/ push);
-const major = series(bumpMajor, parallel(makeJs, makeCss), tag, /*publish,*/ push);
+const patch = series(
+  bumpPatch,
+  parallel(makeJs, makeCss),
+  tag,
+  /*publish,*/ push,
+);
+const minor = series(
+  bumpMinor,
+  parallel(makeJs, makeCss),
+  tag,
+  /*publish,*/ push,
+);
+const major = series(
+  bumpMajor,
+  parallel(makeJs, makeCss),
+  tag,
+  /*publish,*/ push,
+);
 
 const watchFiles = () => {
   watch(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"], makeJs);
@@ -93,6 +131,7 @@ export {
   makeJs,
   minor,
   patch,
+  processPlainJs,
   serve,
   watchFiles as watch,
 };
