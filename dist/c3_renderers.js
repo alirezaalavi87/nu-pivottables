@@ -16,7 +16,7 @@
     var makeC3Chart;
     makeC3Chart = function(chartOpts = {}) {
       return function(pivotData, opts) {
-        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, chart, colKey, colKeys, columns, dataColumns, defaults, error, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, j, k, l, len, len1, len2, len3, len4, m, n, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, renderArea, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
+        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, renderArea, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
           localeStrings: {
             vs: "vs",
@@ -52,10 +52,10 @@
           colKeys.push([]);
         }
         headers = (function() {
-          var j, len, results;
+          var i, len, results;
           results = [];
-          for (j = 0, len = colKeys.length; j < len; j++) {
-            h = colKeys[j];
+          for (i = 0, len = colKeys.length; i < len; i++) {
+            h = colKeys[i];
             results.push(h.join("-"));
           }
           return results;
@@ -82,10 +82,10 @@
           if (groupByTitle !== "") {
             titleText += ` ${opts.localeStrings.by} ${groupByTitle}`;
           }
-          for (j = 0, len = rowKeys.length; j < len; j++) {
-            rowKey = rowKeys[j];
-            for (k = 0, len1 = colKeys.length; k < len1; k++) {
-              colKey = colKeys[k];
+          for (i = 0, len = rowKeys.length; i < len; i++) {
+            rowKey = rowKeys[i];
+            for (j = 0, len1 = colKeys.length; j < len1; j++) {
+              colKey = colKeys[j];
               agg = pivotData.getAggregator(rowKey, colKey);
               if (agg.value() != null) {
                 vals = rowKey.concat(colKey);
@@ -115,20 +115,20 @@
           }
         } else {
           numCharsInHAxis = 0;
-          for (l = 0, len2 = headers.length; l < len2; l++) {
-            x = headers[l];
+          for (k = 0, len2 = headers.length; k < len2; k++) {
+            x = headers[k];
             numCharsInHAxis += x.length;
           }
           if (numCharsInHAxis > 50) {
             rotationAngle = 45;
           }
           columns = [];
-          for (m = 0, len3 = rowKeys.length; m < len3; m++) {
-            rowKey = rowKeys[m];
+          for (l = 0, len3 = rowKeys.length; l < len3; l++) {
+            rowKey = rowKeys[l];
             rowHeader = rowKey.join("-");
             row = [rowHeader === "" ? fullAggName : rowHeader];
-            for (n = 0, len4 = colKeys.length; n < len4; n++) {
-              colKey = colKeys[n];
+            for (m = 0, len4 = colKeys.length; m < len4; m++) {
+              colKey = colKeys[m];
               val = parseFloat(pivotData.getAggregator(rowKey, colKey).value());
               if (isFinite(val)) {
                 row.push(val);
@@ -164,15 +164,11 @@
           axis: {
             rotated: chartOpts.horizontal,
             y: {
-              label: {
-                text: vAxisTitle
-              },
+              label: vAxisTitle,
               tick: {}
             },
             x: {
-              label: {
-                text: hAxisTitle
-              },
+              label: hAxisTitle,
               tick: {
                 rotate: rotationAngle,
                 multiline: false
@@ -215,23 +211,20 @@
             title: function() {
               return fullAggName;
             },
-            name: function(name, ratio, id, i) {
+            name: function() {
               return "";
             },
-            value: function(value, ratio, id, i) {
+            value: function(a, b, c, d, e) {
               ({
                 name: series,
                 value: y,
                 x
-              } = i[0]);
+              } = e[0]);
               return formatter(scatterData.t[series][x][y]);
             }
           };
         } else {
-          params.axis.x = {
-            type: "category",
-            categories: headers
-          };
+          params.axis.x.type = 'category';
           if ((base7 = params.axis.y.tick).format == null) {
             base7.format = function(v) {
               return formatter(v);
@@ -244,10 +237,10 @@
           };
           if (chartOpts.horizontal) {
             categories = (function() {
-              var len5, o, results;
+              var len5, n, results;
               results = [];
-              for (o = 0, len5 = columns.length; o < len5; o++) {
-                c = columns[o];
+              for (n = 0, len5 = columns.length; n < len5; n++) {
+                c = columns[n];
                 results.push(c.shift());
               }
               return results;
@@ -271,11 +264,11 @@
             params.data.groups = [
               (function() {
                 var len5,
-              o,
+              n,
               results;
                 results = [];
-                for (o = 0, len5 = colKeys.length; o < len5; o++) {
-                  x = colKeys[o];
+                for (n = 0, len5 = colKeys.length; n < len5; n++) {
+                  x = colKeys[n];
                   results.push(x.join("-"));
                 }
                 return results;
@@ -285,11 +278,11 @@
             params.data.groups = [
               (function() {
                 var len5,
-              o,
+              n,
               results;
                 results = [];
-                for (o = 0, len5 = rowKeys.length; o < len5; o++) {
-                  x = rowKeys[o];
+                for (n = 0, len5 = rowKeys.length; n < len5; n++) {
+                  x = rowKeys[n];
                   results.push(x.join("-"));
                 }
                 return results;
@@ -302,12 +295,7 @@
         }).appendTo($("body"));
         result = $("<div>").appendTo(renderArea);
         params.bindto = result[0];
-        try {
-          chart = c3.generate(params);
-        } catch (error1) {
-          error = error1;
-          console.error("Error in generating C3 chart:", error);
-        }
+        c3.generate(params);
         result.detach();
         renderArea.remove();
         return $("<div>").append(title, result);
