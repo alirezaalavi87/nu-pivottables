@@ -1,0 +1,44 @@
+name: Feature request template
+description: Template for requesting features.
+title: "feat: [short descirptive title]"
+lables: ["feature request", "decision"]
+type: feat
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version of the software currently in use
+      placeholder: ex. v2.3.4
+    validations:
+      required: false
+  - type: textarea
+    id: feat-desc
+    attributes:
+      label: What do we want?
+      description: Descriptive information about what exactly you want and what should happen
+    validations:
+      required: true
+  - type: textarea
+    id: feat-reason
+    attributes:
+      label: Why do we want it?
+      description: Provide convincing reasons about why is this feature valuable and we should spend resources on it.
+    validations:
+      required: true
+  - type: textarea
+    id: feat-stakeholders
+    attributes:
+      label: Who does this benefit?
+      placeholder: |
+        - foo
+        - bar
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggestions on how to approach this task
+    validations:
+      required: false
+
