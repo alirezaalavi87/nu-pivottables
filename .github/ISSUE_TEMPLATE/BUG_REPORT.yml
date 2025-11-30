@@ -1,0 +1,50 @@
+name: Bug Report
+description: File a bug report.
+title: "bug: [short descirptive title]"
+lables: ["bug", "triage"]
+type: bug
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version of the software
+      placeholder: ex. v2.3.4
+    validations:
+      required: true
+  - type: textarea
+    id: browser
+    attributes:
+      label: Name and the version of your browser(s)
+      description: Name and the version of the browsers that the bug happens in
+      placeholder: ex. Firefox v126.0.2
+    validations:
+      required: true
+  - type: textarea
+    id: issue-desc
+    attributes:
+      label: What is the issue?
+      description: Descriptive information about the exact issue at hand.
+    validations:
+      required: true
+  - type: textarea
+    id: user-expectation
+    attributes:
+      label: Expected behaviour
+      description: Descriptive information about exactly how the software should be behaving to be correct.
+    validations:
+      required: true
+  - type: textarea
+    id: recreation
+    attributes:
+      label: How to recreate
+      description: Exact steps to reproduce this step. Please give concrete examples and steps.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution
+    validations:
+      required: false
+
