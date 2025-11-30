@@ -1,8 +1,17 @@
+## Editors
+**/.vscode
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 node_modules
 bower_components
-.idea/
 Rdatasets
 /vendor/
 composer.lock
-
 yarn.lock
