@@ -140,18 +140,18 @@ const makeXLSXExport = ($, xlsxHandler) => {
         exportXLSX: "Export XLSX",
       },
     };
+    opts = $.extend(true, {}, defaults, opts);
     const xlsxFile = await createXLSXFile(xlsxHandler, pivotData);
-    console.log(xlsxFile);
 
     /* render the UI */
-    const downloadXLSXLink = createDownloadLink(
+    const XLSXDownloadLink = createDownloadLink(
       xlsxFile,
       "nu-pivottables-export.xlsx",
       opts,
     );
     const resultUI = $("<div>")
       .addClass("spreadsheet-downloads")
-      .append(downloadXLSXLink);
+      .append(XLSXDownloadLink);
 
     return resultUI;
   };
