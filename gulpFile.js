@@ -47,7 +47,10 @@ const processPlainJs = () => {
   ]).pipe(sourcemaps.init())
     .pipe(dest("./dist")) // copy original files to dist
     .pipe(uglify())
-    .pipe(rename({ suffix: ".min" }))
+    .pipe(rename((path) => {
+      path.dirname = ""; // Remove directory structure
+      path.basename += ".min";
+    }))
     .pipe(dest("./dist"))
     .on("error", (err) => {
       console.error("Error while processing plain JS files: ", err);
