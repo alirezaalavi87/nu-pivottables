@@ -81,6 +81,7 @@ table.pvtTable tr th {
     border: 1px solid var(--color__outline);
     font-size: 10pt;
     padding: 5px;
+    text-wrap: auto;
 }
 
 table.pvtTable .pvtColLabel {
