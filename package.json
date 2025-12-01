@@ -1,5 +1,5 @@
 {
-  "name": "pivottable",
+  "name": "nu-pivottables",
   "version": "3.0.0",
   "description": "Javascript Pivot Table (aka Pivot Grid, Pivot Chart, Cross-Tab) implementation with drag'n'drop",
   "main": "dist/pivot.js",
@@ -21,14 +21,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/nicolaskruchten/pivottable.git"
+    "url": "https://github.com/alirezaalavi87/nu-pivottables"
   },
-  "author": "Nicolas Kruchten",
-  "license": "MIT",
+  "author": "Alireza Alavi",
+  "license": "EPLv2",
   "bugs": {
-    "url": "https://github.com/nicolaskruchten/pivottable/issues"
+    "url": "https://github.com/alirezaalavi87/nu-pivottables/issues"
   },
-  "homepage": "https://github.com/nicolaskruchten/pivottable",
+  "homepage": "https://github.com/alirezaalavi87/nu-pivottables/issues",
   "dependencies": {
     "jquery": ">=1.9.0"
   },
