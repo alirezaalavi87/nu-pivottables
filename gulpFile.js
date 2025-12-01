@@ -45,7 +45,6 @@ const processPlainJs = () => {
   return src([
     "./src/**/*.js",
   ]).pipe(sourcemaps.init())
-    .pipe(dest("./dist")) // copy original files to dist
     .pipe(uglify())
     .pipe(rename((path) => {
       path.dirname = ""; // Remove directory structure
