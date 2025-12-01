@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Export pivottable to XLSX</title>
+    <!-- external libs from cdnjs -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.1-prerelease.0/exceljs.min.js"
+        integrity="sha512-ggd305P5+Cw/oOst5Mh0Zkm7tvNJmWsAcJV8d+VvOXO2UK7c89pCoRo/Pi/eNJvQeM1AG1M2ae5/6ETpTHFxsA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- PivotTable.js libs from ../dist -->
+    <link rel="stylesheet" type="text/css" href="../dist/pivot.css">
+    <script type="text/javascript" src="../dist/pivot.js"></script>
+    <script type="text/javascript" src="../dist/export_renderers.js"></script>
+    <script type="text/javascript" src="../dist/spreadsheet_renderers.min.js"></script>
+
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: Verdana;
+            min-height: 95%;
+        }
+
+        #filechooser {
+            color: #555;
+            text-decoration: underline;
+            ;
+            cursor: pointer;
+            /* "hand" cursor */
+        }
+    </style>
+</head>
+
+<body class="whiteborder">
+    <script type="text/javascript">
+        $(function () {
+            var renderers = $.extend(
+                $.pivotUtilities.renderers,
+                $.pivotUtilities.spreadsheet_renderers,
+            );
+            $.getJSON("mps.json", function (mps) {
+                $("#output").pivotUI(mps, {
+                    renderers: renderers,
+                    cols: ["Party"],
+                    rows: ["Province", "Gender"],
+                });
+            });
+        });
+    </script>
+    <p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
+    <p>
+    Note: The export only supports the Sum aggregation function.
+    you can change the aggregation function after the export.
+    </p>
+    <div id="output" style="margin: 10px;"></div>
+</body>
+
+</html>
