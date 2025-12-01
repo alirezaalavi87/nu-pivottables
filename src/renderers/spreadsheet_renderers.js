@@ -1,13 +1,12 @@
-const callWithJQuery = (pivotModule) => {
+function callWithJQuery(pivotModule) {
   if (typeof exports === "object" && typeof module === "object") { // CommonJS
-    return pivotModule(require("jquery"), require("exceljs"));
+    pivotModule(require("jquery"), require("exceljs"));
   } else if (typeof define === "function" && define.amd) { // AMD
-    return define(["jquery", "exceljs"], pivotModule);
-  } else {
-    // Plain browser env
-    return pivotModule(jQuery, ExcelJS);
+    define(["jquery", "exceljs"], pivotModule);
+  } else { // Plain browser environment
+    pivotModule(jQuery, ExcelJS);
   }
-};
+}
 
 const createWorkBookXLSX = (
   handler,
