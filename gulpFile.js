@@ -108,6 +108,7 @@ const tagGit = async () => {
 
 const tag = async (cb) => {
   parallel(makeCss, makeJs);
+  //TODO verify if test are being passed
   await bumpVersion();
   await generateChangelog();
   // Do the git operations (create commit, tag etc.)
@@ -115,6 +116,11 @@ const tag = async (cb) => {
 
   cb();
 };
+
+// TODO
+// const release = async (cb) => {
+//
+// }
 
 const watchFiles = () => {
   watch([
