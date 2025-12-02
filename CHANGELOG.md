@@ -1,5 +1,35 @@
 # Nu-pivottables Changelog
 
+## [3.0.1] - 2025-12-02
+
+### 🐛 Fixed
+
+- *(spreadsheet_renderers)* Const callWithJQuery -> function callWithJQuery
+
+### 💼 Other
+
+- *(examples)* Add spreadsheet export example
+- *(gulp)* Update tasks, add tag task
+
+### 🚜 Refactor
+
+- *(xlsx export)* Remove unnecassary async await from function
+
+### 📚 Documentation
+
+- Update with license and nu-pivottables info
+
+### 🎨 Styling
+
+- *(table)* Add auto wrapping for table headers (no overflowing text)
+
+### ⚙️ Miscellaneous Tasks
+
+- *(gulp)* Write .min.js outputs into flat /dist structure
+- *(gulp)* Fix issue with copying the original file under dist
+- *(legal-license)* Relicense from MIT to EPLv2
+- *(project)* Update project info, remove unneeded files
+
 ## [3.0.0] - 2025-11-30
 
 ### 🚀 Added
@@ -23,6 +53,7 @@
 
 ### 💼 Other
 
+- Turkish renderer translated
 - *(gitignore)* Excluded re-creatable build files from git
 - Minor code style changes
 - Since the menuRendering is now conditional and much more efficient, increase menuLimit

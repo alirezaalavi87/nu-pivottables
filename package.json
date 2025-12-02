@@ -1,6 +1,6 @@
 {
   "name": "nu-pivottables",
-  "version": "3.0.0",
+  "version": "v3.0.1",
   "description": "Javascript Pivot Table (aka Pivot Grid, Pivot Chart, Cross-Tab) implementation with drag'n'drop",
   "main": "dist/pivot.js",
   "type": "module",
