@@ -1,15 +1,15 @@
-import { dest, parallel, series, src, watch } from "gulp"; // Updated imports
+import { dest, parallel, series, src, watch } from "gulp";
 import filter from "gulp-filter";
 import uglify from "gulp-uglify";
-import git from "gulp-git";
-import bump from "gulp-bump";
-import tagVersion from "gulp-tag-version"; // Updated import name
-import { spawn } from "child_process";
 import coffee from "gulp-coffee";
-import minifyCSS from "gulp-clean-css"; // Updated package
+import minifyCSS from "gulp-clean-css";
 import sourcemaps from "gulp-sourcemaps";
 import rename from "gulp-rename";
 import { exec } from "child_process";
+import { promisify } from "util";
+import { readFileSync, writeFileSync } from "fs";
+
+const execPromise = promisify(exec);
 
 // Define the tasks using async functions
 const makeCss = () => {
@@ -58,58 +58,79 @@ const processPlainJs = () => {
 
 const makeJs = parallel(processPlainJs, processCoffeeScript);
 
-const inc = (importance) => {
-  // get all the files to bump version in
-  return src(["./package.json", "./bower.json"])
-    // bump the version number in those files
-    .pipe(bump({ type: importance }))
-    // save it back to filesystem
-    .pipe(dest("./"));
+const getBumpedVersion = async () => {
+  try {
+    const { stdout } = await execPromise("git cliff --bumped-version");
+    return stdout.trim();
+  } catch (err) {
+    console.error("Error getting bumped version:", err);
+    throw err;
+  }
 };
 
-const publish = (done) => {
-  spawn("npm", ["publish"], { stdio: "inherit" }).on("close", done);
+const bumpVersion = async () => {
+  try {
+    const version = await getBumpedVersion();
+    // get bumped version
+    console.log("Bumped Version:", version);
+    // get the current package-json
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+    packageJson.version = version;
+    // Write back to package.json
+    writeFileSync("package.json", JSON.stringify(packageJson, null, 2));
+    console.log(`Updated package.json version to ${version}`);
+  } catch (err) {
+    console.error("Error getting bumped version:", err);
+  }
 };
 
-const push = (done) => {
-  git.push("origin", "master", { args: "--tags" }, function (err) {
-    if (err) throw err;
-    done();
-  });
+const generateChangelog = async () => {
+  try {
+    await execPromise("git cliff --bump -o CHANGELOG.md");
+    console.log("Changelog generated successfully");
+  } catch (err) {
+    console.error("Error generating changelog:", err);
+  }
 };
 
-const tag = () => {
-  return src(["./package.json", "./bower.json"])
-    .pipe(git.commit("version bump"))
-    .pipe(filter("package.json"))
-    .pipe(tagVersion());
+const tagGit = async () => {
+  try {
+    const v = await getBumpedVersion();
+    await execPromise("git add .");
+    await execPromise(`git commit -m "Bump version to ${v} + CHANGELOG"`);
+    await execPromise(`git tag ${v}`);
+
+    console.log(`Created commit and tag for version ${v}`);
+  } catch (err) {
+    console.error("Error in git commit and tag:", err);
+  }
 };
 
-const bumpPatch = () => inc("patch");
-const bumpMinor = () => inc("minor");
-const bumpMajor = () => inc("major");
+const tag = async (cb) => {
+  parallel(makeCss, makeJs);
+  //TODO verify if test are being passed
+  await bumpVersion();
+  await generateChangelog();
+  // Do the git operations (create commit, tag etc.)
+  await tagGit();
 
-const patch = series(
-  bumpPatch,
-  parallel(makeJs, makeCss),
-  tag,
-  /*publish,*/ push,
-);
-const minor = series(
-  bumpMinor,
-  parallel(makeJs, makeCss),
-  tag,
-  /*publish,*/ push,
-);
-const major = series(
-  bumpMajor,
-  parallel(makeJs, makeCss),
-  tag,
-  /*publish,*/ push,
-);
+  cb();
+};
+
+// TODO
+// const release = async (cb) => {
+//
+// }
 
 const watchFiles = () => {
-  watch(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"], makeJs);
+  watch([
+    "./src/*.coffee",
+    "./locales/*.coffee",
+    "./tests/*.coffee",
+    "./src/**/*.js",
+    "./locales/*.js",
+    "./tests/*.js",
+  ], makeJs);
   watch("./dist/pivot.css", makeCss);
 };
 
@@ -124,16 +145,10 @@ const serve = (done) => {
 const defaultTask = parallel(makeJs, makeCss);
 
 export {
-  bumpMajor,
-  bumpMinor,
-  bumpPatch,
   defaultTask as default,
-  major,
   makeCss,
   makeJs,
-  minor,
-  patch,
-  processPlainJs,
   serve,
+  tag,
   watchFiles as watch,
 };
