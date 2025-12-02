@@ -44,9 +44,9 @@ const addPivotTableToWorksheet = (
  * @param {object} workbook
  * @returns {Promise<Buffer>}
  */
-const workbookToXLSXFile = async (workbook) => {
+const workbookToXLSXFile = (workbook) => {
   try {
-    const buf = await workbook.xlsx.writeBuffer();
+    const buf = workbook.xlsx.writeBuffer();
 
     return buf;
   } catch (err) {
