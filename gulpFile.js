@@ -2,7 +2,6 @@ import { dest, parallel, series, src, watch } from "gulp";
 import filter from "gulp-filter";
 import uglify from "gulp-uglify";
 import coffee from "gulp-coffee";
-import git from "gulp-git";
 import minifyCSS from "gulp-clean-css";
 import sourcemaps from "gulp-sourcemaps";
 import rename from "gulp-rename";
@@ -69,68 +68,63 @@ const getBumpedVersion = async () => {
   }
 };
 
-const bumpVersion = () => {
-  return async (cb) => {
-    try {
-      const version = await getBumpedVersion();
-      // get bumped version
-      console.log("Bumped Version:", version);
-      // get the current package-json
-      const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
-      packageJson.version = version;
-      // Write back to package.json
-      writeFileSync("package.json", JSON.stringify(packageJson, null, 2));
-      console.log(`Updated package.json version to ${version}`);
-
-      cb();
-    } catch (err) {
-      console.error("Error getting bumped version:", err);
-      cb(err);
-    }
-  };
+const bumpVersion = async () => {
+  try {
+    const version = await getBumpedVersion();
+    // get bumped version
+    console.log("Bumped Version:", version);
+    // get the current package-json
+    const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+    packageJson.version = version;
+    // Write back to package.json
+    writeFileSync("package.json", JSON.stringify(packageJson, null, 2));
+    console.log(`Updated package.json version to ${version}`);
+  } catch (err) {
+    console.error("Error getting bumped version:", err);
+  }
 };
 
-const generateChangelog = () => {
-  return async (cb) => {
-    try {
-      await execPromise("git cliff --bump -o CHANGELOG.md");
-      console.log("Changelog generated successfully");
-      cb();
-    } catch (err) {
-      console.error("Error generating changelog:", err);
-      cb(err);
-    }
-  };
+const generateChangelog = async () => {
+  try {
+    await execPromise("git cliff --bump -o CHANGELOG.md");
+    console.log("Changelog generated successfully");
+  } catch (err) {
+    console.error("Error generating changelog:", err);
+  }
 };
 
-const tagGit = () => {
-  return async (cb) => {
-    try {
-      const v = await getBumpedVersion();
-      await execPromise("git add .");
-      await execPromise(`git commit -m "Bump version to ${v} + CHANGELOG"`);
-      await execPromise(`git tag -a ${version} -m "Release ${version}"`);
+const tagGit = async () => {
+  try {
+    const v = await getBumpedVersion();
+    await execPromise("git add .");
+    await execPromise(`git commit -m "Bump version to ${v} + CHANGELOG"`);
+    await execPromise(`git tag ${v}`);
 
-      console.log(`Created commit and tag for version ${v}`);
-      cb();
-    } catch (err) {
-      console.error("Error in git commit and tag:", err);
-      cb(err);
-    }
-  };
+    console.log(`Created commit and tag for version ${v}`);
+  } catch (err) {
+    console.error("Error in git commit and tag:", err);
+  }
 };
 
-// Setup a release
-const tag = series(
-  parallel(makeCss, makeJs),
-  bumpVersion(),
-  generateChangelog(),
+const tag = async (cb) => {
+  parallel(makeCss, makeJs);
+  await bumpVersion();
+  await generateChangelog();
   // Do the git operations (create commit, tag etc.)
-  tagGit(),
-);
+  await tagGit();
+
+  cb();
+};
 
 const watchFiles = () => {
-  watch(["./src/*.coffee", "./locales/*.coffee", "./tests/*.coffee"], makeJs);
+  watch([
+    "./src/*.coffee",
+    "./locales/*.coffee",
+    "./tests/*.coffee",
+    "./src/**/*.js",
+    "./locales/*.js",
+    "./tests/*.js",
+  ], makeJs);
   watch("./dist/pivot.css", makeCss);
 };
 
@@ -148,7 +142,7 @@ export {
   defaultTask as default,
   makeCss,
   makeJs,
-  tag,
   serve,
+  tag,
   watchFiles as watch,
 };
