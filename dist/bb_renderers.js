@@ -16,7 +16,7 @@
     var makeBBChart;
     makeBBChart = function(chartOpts = {}) {
       return function(pivotData, opts) {
-        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, renderArea, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
+        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
           localeStrings: {
             vs: "vs",
@@ -184,6 +184,11 @@
           },
           color: {
             pattern: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"]
+          },
+          clipPath: false,
+          resize: {
+            auto: "parent",
+            timer: false
           }
         };
         params = $.extend(true, {}, params, opts.bb);
@@ -274,7 +279,6 @@
                 return results;
               })()
             ];
-            console.log(params.data.groups);
           } else {
             params.data.groups = [
               (function() {
@@ -291,14 +295,13 @@
             ];
           }
         }
-        renderArea = $("<div>", {
-          style: "display:none;"
-        }).appendTo($("body"));
-        result = $("<div>").appendTo(renderArea);
+        // attaching to the render box results in correct rendering and calculation of dimensions.
+        // Lazy rendering might also be possible but I couldn't figure it out.
+        // https://github.com/naver/billboard.js/issues/1015
+        result = $("<div>").appendTo($(".pvtRendererArea"));
         params.bindto = result[0];
         bb.generate(params);
         result.detach();
-        renderArea.remove();
         return $("<div>").append(title, result);
       };
     };

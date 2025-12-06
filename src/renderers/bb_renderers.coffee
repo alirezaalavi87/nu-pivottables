@@ -118,6 +118,10 @@ callWithJQuery ($, bb) ->
                            "#b82e2e", "#316395", "#994499", "#22aa99",
                            "#aaaa11", "#6633cc", "#e67300", "#8b0707",
                            "#651067", "#329262", "#5574a6", "#3b3eac" ]
+            clipPath: false
+            resize:
+                auto: "parent"
+                timer: false
 
 
         params = $.extend(true, {}, params, opts.bb)
@@ -163,16 +167,16 @@ callWithJQuery ($, bb) ->
         if chartOpts.stacked
             if chartOpts.horizontal
                 params.data.groups = [x.join("-") for x in colKeys]
-                console.log params.data.groups
             else
                 params.data.groups = [x.join("-") for x in rowKeys]
 
-        renderArea = $("<div>", style: "display:none;").appendTo $("body")
-        result = $("<div>").appendTo renderArea
+        # attaching to the render box results in correct rendering and calculation of dimensions.
+        # Lazy rendering might also be possible but I couldn't figure it out.
+        # https://github.com/naver/billboard.js/issues/1015
+        result = $("<div>").appendTo $(".pvtRendererArea")
         params.bindto = result[0]
         bb.generate params
         result.detach()
-        renderArea.remove()
         return $("<div>").append title, result
 
     $.pivotUtilities.bb_renderers =
