@@ -24,14 +24,19 @@
  *  @property {number} value - the value (importance/weight) of the node
  */
 
-function uid(prefix) {
-  // HACK this is not good and you should use strong UUIDs not math.random
-  const id = Math.random().toString(36).substr(2, 9);
-  if (prefix) {
-    return `${prefix}-${id}`;
+const uniqueId = (length = 16) => {
+  if (crypto.randomUUID) {
+    return crypto.randomUUID();
   }
-  return id;
-}
+  // HACK this is not guaranteed uniqueness. crypto.UUID requires Secure context
+  return parseInt(
+    Math.ceil(Math.random() * Date.now()).toPrecision(length).toString()
+      .replace(".", ""),
+  );
+};
+
+const mergeOptions = (defaults, userOptions) =>
+  Object.assign({}, defaults, userOptions);
 
 function callWithJQuery(pivotModule) {
   if (typeof exports === "object" && typeof module === "object") { // CommonJS
@@ -182,13 +187,13 @@ const renderTreeMap = (data, width, height) => {
     );
 
   node.append("rect")
-    .attr("id", (d) => d.nodeUid = uid("node"))
+    .attr("id", (d) => d.nodeUid = uniqueId())
     .attr("fill", (d) => color(d.height))
     .attr("width", (d) => d.x1 - d.x0)
     .attr("height", (d) => d.y1 - d.y0);
 
   node.append("clipPath")
-    .attr("id", (d) => d.clipUid = uid("clip"))
+    .attr("id", (d) => d.clipUid = uniqueId())
     .append("use")
     .attr("xlink:href", (d) => `#${d.nodeUid}`);
 
@@ -234,27 +239,36 @@ const renderTreeMapUI = (renderedTreemap) => {
   return result;
 };
 
-const createD3Renderers = ($, d3) => {
-  const renderers = {
-    TreeMap: (pivotData, opts) => {
-      // try {
-      const defaults = initializeDefaults($);
-      opts = $.extend(true, {}, defaults, opts);
+const pivotDataToTreemap = (pivotData, options) => {
+  const treemapInputData = pivotDataToTreemapInput(pivotData);
+  const treeMapData = createTreeMap(defaultTree, treemapInputData);
+  const treeMap = renderTreeMap(
+    treeMapData,
+    options.d3.width(),
+    options.d3.height(),
+  );
 
-      const treemapInputData = pivotDataToTreemapInput(pivotData);
-      const treeMapData = createTreeMap(defaultTree, treemapInputData);
-      const treeMap = renderTreeMap(
-        treeMapData,
-        opts.d3.width(),
-        opts.d3.height(),
-      );
-      const treeMapUI = renderTreeMapUI(treeMap);
-      return treeMapUI;
-    },
-  };
-  return renderers;
+  return treeMap;
 };
 
-callWithJQuery(($, d3) => {
-  $.pivotUtilities.d3_renderers = createD3Renderers($, d3);
+const makeTreeMap = () => {
+  const defaults = initializeDefaults($);
+
+  return (pivotData, userOptions) => {
+    const options = mergeOptions(defaults, userOptions);
+    const treeMap = pivotDataToTreemap(pivotData, options);
+    const treeMapUI = renderTreeMapUI(treeMap);
+
+    return treeMapUI;
+  };
+};
+
+const createD3Renderers = ($) => {
+  return {
+    TreeMap: makeTreeMap($),
+  };
+};
+
+callWithJQuery(($) => {
+  $.pivotUtilities.d3_renderers = createD3Renderers($);
 });

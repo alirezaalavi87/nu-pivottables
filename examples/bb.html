@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pivot Demo</title>
+    <!-- external libs from cdnjs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.17.0/billboard.min.css"
+        integrity="sha512-TYS1PO1mGy2XLE8K88hikslTse/6x3eyUxN47wTGnE0epl43cn2NICnBTpAamKFIrA9b+QK8LvnPvGye+8+EnA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+        integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/3.17.0/billboard.min.js"
+        integrity="sha512-9Ef7tjVM/Os0TAt/LfTMUwIAD/DiLPKu9AO9dVwcOGVWswU8KHbYF+P/Z8VwH6aFxHQfU2tMGUKvXBB0OBVAzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js"
+        integrity="sha512-MSOo1aY+3pXCOCdGAYoBZ6YGI0aragoQsg1mKKBHXCYPIWxamwOE7Drh+N5CPgGI5SA9IEKJiPjdfqWFWmZtRA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- PivotTable.js libs from ../dist -->
+    <link rel="stylesheet" type="text/css" href="../dist/pivot.css">
+    <script type="text/javascript" src="../dist/pivot.js"></script>
+    <script type="text/javascript" src="../dist/bb_renderers.min.js"></script>
+
+    <style>
+        body {
+            font-family: Verdana;
+        }
+    </style>
+
+    <!-- optional: mobile support with jqueryui-touch-punch -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- for examples only! script to show code to user -->
+    <script type="text/javascript" src="show_code.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        $(function () {
+            $.getJSON("mps.json", function (mps) {
+                $("#output").pivotUI(mps, {
+                    renderers: $.pivotUtilities.bb_renderers,
+                    cols: ["Party"], rows: ["Province"],
+                });
+            });
+        });
+    </script>
+
+    <p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
+
+    <div id="output" style="margin: 30px;"></div>
+
+</body>
+
+</html>
