@@ -25,11 +25,14 @@ It is a pivot table library with drag'n'drop functionality.
 **TODO**
 
 - [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
+- [ ] Integrate a proper build tool (probably Vite.js) to modernize software and avoid the horrendous UMD export/imports, handle relative paths in build, enhance DX etc.
 - [ ] add CI/CD
 - [ ] fork [pivottable.js wiki](https://github.com/nicolaskruchten/pivottable) and enhance it for nu-pivottables
 - [ ] Update README
 - [ ] add integrations with other ecosystems (python, R)
 - [ ] Remove dependency from JQuery and JQueryUI while keeping the project usable form JQuery (backward compatibility)
+- [ ] Integrate Typescript into project and use where needed.
+
 
 ## What does it do?
 
