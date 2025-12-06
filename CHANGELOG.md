@@ -1,5 +1,24 @@
 # Nu-pivottables Changelog
 
+## [3.1.0] - 2025-12-06
+
+### 🚀 Added
+
+- *(bb_renderers)* Fully working billboard.js charts
+
+### 💼 Other
+
+- *(gulp)* Watch all .coffee files under src
+
+### 🚜 Refactor
+
+- *(d3_renderers)* Use crypto.randomUUID if exists, cleaner code
+
+### 📚 Documentation
+
+- *(readme)* Update readme improvements
+- *(readme)* Update todos
+
 ## [3.0.1] - 2025-12-02
 
 ### 🐛 Fixed
