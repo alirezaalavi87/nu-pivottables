@@ -124,7 +124,7 @@ const tag = async (cb) => {
 
 const watchFiles = () => {
   watch([
-    "./src/*.coffee",
+    "./src/**/*.coffee",
     "./locales/*.coffee",
     "./tests/*.coffee",
     "./src/**/*.js",
