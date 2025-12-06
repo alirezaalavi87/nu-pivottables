@@ -20,10 +20,10 @@ It is a pivot table library with drag'n'drop functionality.
 - Write new code in modern FP javascript+jsDoc
 - Spreadsheet exporting (Excel, XLSX)
 - **Async rendering**: results rendering is now async. This leads to better performance an more freedom of writing renderers, but beware of how that works.
+- Add billboard.js renderer (C3js is not maintained and incompatible with D3 > v6)
 
 **TODO**
 
-- [ ] add billboard.js renderer (C3js is not maintained and incompatible with D3 v7)
 - [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
 - [ ] add CI/CD
 - [ ] fork [pivottable.js wiki](https://github.com/nicolaskruchten/pivottable) and enhance it for nu-pivottables
