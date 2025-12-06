@@ -17,3 +17,20 @@
 * The aim of this project is to have an extensible core component that fits into a single smallish file ([pivot.coffee](https://github.com/alirezaalavi87/nu-pivottables/blob/master/src/pivot.coffee)), which depends only on the jQuery and jQueryUI core. If you want to submit changes which depend on other libraries, please submit them as separate 'plugin' files like the Google Chart or D3 renderers.
 * Preferably, write new parts of code and plugins with modern Javascript+JSDoc instead of coffeescript and try to follow functional programming style and the least amount of side effects.
 * This is a cross-browser, client-side library with very little (if any) browser-specific shim code, so please try to submit modifications that work with as many browsers as possible and which don't require any server-side components
+
+## Version Release
+
+This is of course only allowed for people with the authorization, but for future reference:
+
+- Run the `tag` task from `gulp`
+
+```sh
+./node_modules/gulp/bin/gulp.js tag
+```
+(View it's source in `gulpfile.js` to see what it exactly does)
+
+- Check your git history to see if the committed changes, the versions, the changelog and everything is correct.
+
+- If yes, push your changes and your tag: `git push && git push <tag-name>`
+
+- release version from tag
