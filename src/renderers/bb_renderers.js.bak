@@ -1,0 +1,89 @@
+/*
+ * Billboard.js renderers
+ *
+ * Tested on billboard v3.17
+ */
+
+/**
+ * @typedef {Object} BBChartData
+ * @property {Array<Array<string>>} [columns] - Main data. The first element in each column is it's lable, the rest are its values
+ * @property {Object} [json] - Main data expressed as JSON object
+ * @property {Array<Array<string>>} [groups] - Group attributes together
+ * @property {string} type - Type of the chart (eg. "line", "bar")
+ * @property {boolean} [labels] - Wether to show the label the chart with it's values or not
+ */
+
+function callWithJQuery(pivotModule) {
+  if (typeof exports === "object" && typeof module === "object") { // CommonJS
+    pivotModule(require("jquery"), require("bb"));
+  } else if (typeof define === "function" && define.amd) { // AMD
+    define(["jquery", "bb"], pivotModule);
+  } else { // Plain browser environment
+    pivotModule(jQuery, bb);
+  }
+}
+
+const initializeDefaults = () => ({
+  localeStrings: {
+    vs: "vs",
+    by: "by",
+  },
+  c3: {},
+});
+
+const mergeOptions = (defaults, userOptions) => {
+  const merged = Object.assign({}, defaults, userOptions);
+
+  return merged;
+};
+
+const makeBarChart = (pivotData, options, chartOptions) => {
+  console.log("pivotData", pivotData);
+  console.log("options", options);
+  console.log("chartOptions", chartOptions);
+
+  const chart = bb.generate({});
+};
+
+/**
+ * Create different types of Billboard.js charts with options
+ *
+ * @returns {JQuery}
+ */
+const makeBBChart = (chartOptions = { horizontal: false, stacked: false }) => {
+  if (chartOptions.horizontal === null) {
+    chartOptions.horizontal = false;
+  }
+  if (chartOptions.stacked === null) {
+    chartOptions.stacked = false;
+  }
+
+  return (pivotData, userOptions) => {
+    const defaultOptions = initializeDefaults($);
+    const options = mergeOptions(defaultOptions, userOptions, chartOptions);
+    const chartData = pivotDataToChartData(pivotData);
+    switch (chartOptions.type) {
+      case ("bar"):
+        return makeBarChart(pivotData, options, chartOptions);
+      default:
+        console.error("Wrong chart type: ", chartOptions.type);
+    }
+  };
+};
+
+const createBBRenderers = () => {
+  return {
+    "Horizontal Bar Chart": makeBBChart({ type: "bar", horizontal: true }),
+    "Horizontal Stacked Bar Chart": makeBBChart({
+      type: "bar",
+      horizontal: true,
+      stacked: true,
+    }),
+    "Bar Chart": makeBBChart({ type: "bar" }),
+    "Stacked Bar Chart": makeBBChart({ type: "bar", stacked: true }),
+  };
+};
+
+callWithJQuery(($) => {
+  $.pivotUtilities.bb_renderers = createBBRenderers($);
+});
