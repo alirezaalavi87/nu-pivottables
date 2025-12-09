@@ -54,8 +54,8 @@ function callWithJQuery(pivotModule) {
 const initializeDefaults = ($) => ({
   localeStrings: {},
   d3: {
-    width: () => $(window).width(),
-    height: () => $(window).height(),
+    width: () => $(window).width() || 800,
+    height: () => $(window).height() || 800,
   },
 });
 
