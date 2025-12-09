@@ -16,7 +16,7 @@
     var makeBBChart;
     makeBBChart = function(chartOpts = {}) {
       return function(pivotData, opts) {
-        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
+        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, legendsContainer, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
           localeStrings: {
             vs: "vs",
@@ -182,8 +182,16 @@
           tooltip: {
             grouped: false
           },
-          color: {
-            pattern: ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"]
+          bar: {
+            width: {
+              ratio: 0.8
+            }
+          },
+          legend: {
+            contents: {
+              bindto: "#legend",
+              template: "<div><span style='background-color:{=COLOR}'></span>{=TITLE}</div>"
+            }
           },
           clipPath: false,
           resize: {
@@ -299,10 +307,11 @@
         // Lazy rendering might also be possible but I couldn't figure it out.
         // https://github.com/naver/billboard.js/issues/1015
         result = $("<div>").appendTo($(".pvtRendererArea"));
+        legendsContainer = $("<div id='legend'>");
         params.bindto = result[0];
         bb.generate(params);
         result.detach();
-        return $("<div>").append(title, result);
+        return $("<div>").append(title, result, legendsContainer);
       };
     };
     return $.pivotUtilities.bb_renderers = {

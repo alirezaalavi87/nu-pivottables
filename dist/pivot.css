@@ -346,32 +346,33 @@ button,
     z-index: 1;
 }
 
-/* for c3 treemap chart */
-.node {
-    border: solid 1px white;
-    font: 10px sans-serif;
-    line-height: 12px;
-    overflow: hidden;
-    position: absolute;
-    text-indent: 2px;
+
+/**********
+ * for Billboard.js
+ ***********/
+#legend {
+    width: 100%;
+    /* display: grid; */
+    /* grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); */
+    /* grid-auto-rows: minmax(20px, auto); */
+    /* justify-items: stretch; */
+    /* align-items: center; */
+    font-size: 12px;
 }
 
-.c3 {
-  text {
-    font-size:12px;
-    color:grey;
-  }
-  .tick line {stroke: white;}
+#legend div > span {
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    display: inline-block;
 }
-.c3-line, .c3-focused {
-    stroke-width: 0.15rem !important;
+
+.bb-legend-item {
+    text-overflow: ellipsis;
+    text-wrap: wrap;
+    overflow: hidden;
 }
-.c3-axis path {
-    stroke: grey;
-}
-.c3-circle {
-    opacity: 1 !important;
-}
-.c3-xgrid-focus {
-    visibility: hidden !important;
-}
+
+/**********************
+ * END for Billboard.js
+ **********************/
