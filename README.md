@@ -19,6 +19,7 @@ It is a pivot table library with drag'n'drop functionality.
 - Slowly replace coffeescript with modern JS + JSdoc
 - Write new code in modern FP javascript+jsDoc
 - Spreadsheet exporting (Excel, XLSX)
+  - NOTE: use [protobi/exceljs](https://github.com/protobi/exceljs) until upstream is patched with enhancements and bug fixes.
 - **Async rendering**: results rendering is now async. This leads to better performance an more freedom of writing renderers, but beware of how that works.
 - Add billboard.js renderer (C3js is not maintained and incompatible with D3 > v6)
 
