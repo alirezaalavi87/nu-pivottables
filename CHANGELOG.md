@@ -1,10 +1,15 @@
 # Nu-pivottables Changelog
 
-## [3.1.0] - 2025-12-06
+## [3.1.0] - 2026-06-14
 
 ### 🚀 Added
 
 - *(bb_renderers)* Fully working billboard.js charts
+
+### 🐛 Fixed
+
+- *(charts)* Add default width and height for chart rendering
+- *(charts)* Render chart legends into template for cleaner look
 
 ### 💼 Other
 
@@ -18,6 +23,12 @@
 
 - *(readme)* Update readme improvements
 - *(readme)* Update todos
+- *(contributing)* Add release docs
+- Using excel.js
+
+### ⚙️ Miscellaneous Tasks
+
+- *(npm)* Update npm packages
 
 ## [3.0.1] - 2025-12-02
 
