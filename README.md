@@ -1,5 +1,5 @@
 <!-- [![npm](https://pivottable.js.org/images/npm.svg)](https://www.npmjs.com/package/pivottable) [![cdnjs](https://pivottable.js.org/images/cdnjs.svg)](https://cdnjs.com/libraries/pivottable) [![tests](https://pivottable.js.org/images/tests.svg)](https://pivottable.js.org/tests/)  -->
-![License-EPLv2](https://img.shields.io/badge/License-EPLv2)
+![License-LGPLv3](https://img.shields.io/badge/License-LGPLv3)
 
 # Nu-Pivottables
 A modernized fork of the great [pivottable.js](https://github.com/nicolaskruchten/pivottable) with newer features and capabilities, better performance, better UI.
