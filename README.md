@@ -2,38 +2,39 @@
 ![License-LGPLv3](https://img.shields.io/badge/License-LGPLv3)
 
 # Nu-Pivottables
+
 A modernized fork of the great [pivottable.js](https://github.com/nicolaskruchten/pivottable) with newer features and capabilities, better performance, better UI.
 
 It is a pivot table library with drag'n'drop functionality.
 
 ## Improvements over upstream 🚀
-- Conditional rendering of attribute filters dialog -> much better performance, no more 500 limit on attribute values
-- Updated dependencies (such as):
-    - jQuery v1.11 -> v4
-    - gulp v2 -> v5\
-        updated gulpfile
-    - jasmine v2 -> v5
-    - D3.js v4 -> v7
-- Refactor code for more modularity and aligning with FP standards
-- Farsi(Persian) localization
-- Slowly replace coffeescript with modern JS + JSdoc
-- Write new code in modern FP javascript+jsDoc
-- Spreadsheet exporting (Excel, XLSX)
-  - NOTE: use [protobi/exceljs](https://github.com/protobi/exceljs) until upstream is patched with enhancements and bug fixes.
-- **Async rendering**: results rendering is now async. This leads to better performance an more freedom of writing renderers, but beware of how that works.
-- Add billboard.js renderer (C3js is not maintained and incompatible with D3 > v6)
+
+* Conditional rendering of attribute filters dialog -> much better performance, no more 500 limit on attribute values
+* Updated dependencies (such as):
+  * jQuery v1.11 -> v4
+  * gulp v2 -> v5\
+    updated gulpfile
+  * jasmine v2 -> v5
+  * D3.js v4 -> v7
+  * c3.js -> billboard.js
+* Refactor code for more modularity and aligning with FP standards
+* Farsi(Persian) localization
+* Slowly replace coffeescript with modern JS + JSdoc
+* Write new code in modern FP javascript+jsDoc
+* Spreadsheet exporting (Excel, XLSX)
+  * NOTE: use [protobi/exceljs](https://github.com/protobi/exceljs) until upstream is patched with enhancements and bug fixes.
+* **Async rendering**: results rendering is now async. This leads to better performance an more freedom of writing renderers, but beware of how that works.
+* Add billboard.js renderer (C3js is not maintained and incompatible with D3 > v6)
 
 **TODO**
 
-- [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
-- [ ] Integrate a proper build tool (probably Vite.js) to modernize software and avoid the horrendous UMD export/imports, handle relative paths in build, enhance DX etc.
-- [ ] add CI/CD
-- [ ] fork [pivottable.js wiki](https://github.com/nicolaskruchten/pivottable) and enhance it for nu-pivottables
-- [ ] Update README
-- [ ] add integrations with other ecosystems (python, R)
-- [ ] Remove dependency from JQuery and JQueryUI while keeping the project usable form JQuery (backward compatibility)
-- [ ] Integrate Typescript into project and use where needed.
-
+* [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
+* [ ] Integrate a proper build tool (probably Vite.js) to modernize software and avoid the horrendous UMD export/imports, handle relative paths in build, enhance DX etc.
+* [ ] add CI/CD
+* [ ] fork [pivottable.js wiki](https://github.com/nicolaskruchten/pivottable) and enhance it for nu-pivottables
+* [ ] Update README
+* [ ] add integrations with other ecosystems (python, R)
+* [ ] Remove dependency from JQuery and JQueryUI while keeping the project usable form JQuery (backward compatibility)
 
 ## What does it do?
 
@@ -44,7 +45,6 @@ nu-pivottables' basic function is to enable data exploration and analysis by tur
 
 (The animation is from pivottables.js, nu-pivottables has updated UI)
 The animation above is based on the [Canadian Parliament 2012 dataset example](https://pivottable.js.org/examples/fully_loaded.html).
-
 
 ## Where are the demos/examples?
 

@@ -4,6 +4,37 @@
 
 * Please read this repo's [guidelines regarding issues](https://github.com/alirezaalavi87/nu-pivottables/blob/master/SUPPORT.md).
 
+## Setting up for dev
+
+### Run dev server
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the dev server which watches files for changes:
+
+```bash
+node_modules/gulp/bin/gulp.js watch serve
+```
+
+Open your browser at the port that the server is running,
+e.g. `http://localhost:8080`
+
+### Run tests
+
+After running the dev server, Go to the path
+`http://localhost:8080/tests` to run the tests.
+
+If not running a dev server, run tests by opening
+`dist/tests/index.html` in the build output.
+
+### Build
+
+Compile/minify the files into the `dist` directory by running `node_modules/gulp/bin/gulp.js`
+
 ## Pull Requests
 
 [Pull requests](https://help.github.com/articles/using-pull-requests) to this project are very welcome! They are most likely to be merged in if they conform to this project's basic goals, scope and structure:
@@ -22,15 +53,16 @@
 
 This is of course only allowed for people with the authorization, but for future reference:
 
-- Run the `tag` task from `gulp`
+* Run the `tag` task from `gulp`
 
 ```sh
 ./node_modules/gulp/bin/gulp.js tag
 ```
+
 (View it's source in `gulpfile.js` to see what it exactly does)
 
-- Check your git history to see if the committed changes, the versions, the changelog and everything is correct.
+* Check your git history to see if the committed changes, the versions, the changelog and everything is correct.
 
-- If yes, push your changes and your tag: `git push && git push <tag-name>`
+* If yes, push your changes and your tag: `git push && git push <tag-name>`
 
-- release version from tag
+* release version from tag
