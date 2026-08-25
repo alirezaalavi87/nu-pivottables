@@ -5,7 +5,7 @@ callWithJQuery = (pivotModule) ->
         define ["jquery", "bb"], pivotModule
     # Plain browser env
     else
-        pivotModule jQuery, bb
+        pivotModule jQuery, (if typeof bb != "undefined" then bb else null)
 
 callWithJQuery ($, bb) ->
 
@@ -171,7 +171,8 @@ callWithJQuery ($, bb) ->
         # https://github.com/naver/billboard.js/issues/1015
         result = $("<div>").appendTo $(".pvtRendererArea")
         params.bindto = result[0]
-        bb.generate params
+        bbInst = opts.instance ? bb
+        bbInst.generate params
         result.detach()
         return $("<div>").append title, result
 

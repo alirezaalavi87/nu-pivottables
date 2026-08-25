@@ -8,7 +8,7 @@
       return define(["jquery", "bb"], pivotModule);
     } else {
       // Plain browser env
-      return pivotModule(jQuery, bb);
+      return pivotModule(jQuery, (typeof bb !== "undefined" ? bb : null));
     }
   };
 
@@ -16,7 +16,7 @@
     var makeBBChart;
     makeBBChart = function(chartOpts = {}) {
       return function(pivotData, opts) {
-        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
+        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, bbInst, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, ref4, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
           localeStrings: {
             vs: "vs",
@@ -302,7 +302,8 @@
         // https://github.com/naver/billboard.js/issues/1015
         result = $("<div>").appendTo($(".pvtRendererArea"));
         params.bindto = result[0];
-        bb.generate(params);
+        bbInst = (ref4 = opts.instance) != null ? ref4 : bb;
+        bbInst.generate(params);
         result.detach();
         return $("<div>").append(title, result);
       };

@@ -4,18 +4,16 @@
 <head>
     <title>Pivot Demo</title>
     <!-- external libs from cdnjs -->
-    <!-- Billboard.js CSS -->
-    <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/4.0.3/billboard.min.css"
-            integrity="sha512-vrgBxrC7VoX6IuAUhGFmizE2JnEq0Fq9g4LOucdA65OG4SIGRDe/Qvi8pAC7pA5fpLzA+LzuBOjF/17GrrthdA=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer" />
-
     <!-- D3.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
         integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Billboard.js -->
+    <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/4.0.3/billboard.min.css"
+            integrity="sha512-vrgBxrC7VoX6IuAUhGFmizE2JnEq0Fq9g4LOucdA65OG4SIGRDe/Qvi8pAC7pA5fpLzA+LzuBOjF/17GrrthdA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/4.0.3/billboard.min.js"
         integrity="sha512-Wpw1rt4divfNq3qjHv4kKp/FkaC2dy4omWj1mU5Xt2JDhiPYjQyDQEV7W4AkZqlC0zIDM8qgsJAvRizEU9kGiw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -48,6 +46,11 @@
                 $("#output").pivotUI(mps, {
                     renderers: $.pivotUtilities.bb_renderers,
                     cols: ["Party"], rows: ["Province"],
+                    rendererOptions: {
+                        render: {
+                           mode: "foo"
+                        }
+                    }
                 });
             });
         });
@@ -56,7 +59,6 @@
     <p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
 
     <div id="output" style="margin: 30px;"></div>
-
 </body>
 
 </html>

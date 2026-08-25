@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Pivot Demo - Billboard.js Canvas Rendering</title>
+        <!-- Billboard.js CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/4.0.3/billboard.min.css"
+            integrity="sha512-vrgBxrC7VoX6IuAUhGFmizE2JnEq0Fq9g4LOucdA65OG4SIGRDe/Qvi8pAC7pA5fpLzA+LzuBOjF/17GrrthdA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <!-- JQuery -->
+        <script
+            src="https://code.jquery.com/jquery-4.0.0.min.js"
+            integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+            crossorigin="anonymous"
+        ></script>
+        <!-- JQuery-UI -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js"
+            integrity="sha512-MSOo1aY+3pXCOCdGAYoBZ6YGI0aragoQsg1mKKBHXCYPIWxamwOE7Drh+N5CPgGI5SA9IEKJiPjdfqWFWmZtRA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <!-- PivotTable.js libs from ../dist -->
+        <link rel="stylesheet" type="text/css" href="../dist/pivot.css" />
+        <script type="text/javascript" src="../dist/pivot.js"></script>
+        <script type="text/javascript" src="../dist/bb_renderers.min.js"></script>
+
+        <style>
+            body {
+                font-family: Verdana;
+            }
+        </style>
+
+        <!-- for examples only! script to show code to user -->
+        <script type="text/javascript" src="show_code.js"></script>
+    </head>
+
+    <body>
+        <script type="importmap">
+            {
+                "imports": {
+                    "d3-time-format": "https://esm.sh/d3-time-format",
+                    "d3-selection": "https://esm.sh/d3-selection",
+                    "d3-brush": "https://esm.sh/d3-brush",
+                    "d3-dsv": "https://esm.sh/d3-dsv",
+                    "d3-drag": "https://esm.sh/d3-drag",
+                    "d3-scale": "https://esm.sh/d3-scale",
+                    "d3-transition": "https://esm.sh/d3-transition",
+                    "d3-axis": "https://esm.sh/d3-axis",
+                    "d3-ease": "https://esm.sh/d3-ease",
+                    "d3-hierarchy": "https://esm.sh/d3-hierarchy",
+                    "d3-interpolate": "https://esm.sh/d3-interpolate",
+                    "d3-shape": "https://esm.sh/d3-shape",
+                    "d3-zoom": "https://esm.sh/d3-zoom"
+                }
+            }
+        </script>
+        <script type="module">
+            import bb, {
+                canvas,
+                bar,
+                line,
+                area,
+                scatter,
+                treemap,
+                step
+            } from "https://unpkg.com/billboard.js@4.0.3/dist-esm/index.canvas.js";
+
+            // Register chart types for ESM canvas mode
+            bar(); line(); area(); scatter(); treemap(); step();
+
+            $(function () {
+                $.getJSON("mps.json", function (mps) {
+                    $("#output").pivotUI(mps, {
+                        renderers: $.pivotUtilities.bb_renderers,
+                        cols: ["Party"],
+                        rows: ["Province"],
+                        rendererOptions: {
+                            instance: bb,
+                            bb: {
+                                render: {
+                                    mode: canvas(),
+                                },
+                            },
+                        },
+                    });
+                });
+            });
+        </script>
+
+        <p><a href="index.html">&laquo; back to PivotTable.js examples</a></p>
+
+        <p>
+            NOTE:
+
+            In my tests so far, interestingly, the canvas rendering seems slower than
+            the normal rendering, displayed in <a href="/examples/bb.html">billoard.js example</a>
+        </p>
+
+        <div id="output" style="margin: 30px"></div>
+    </body>
+</html>
