@@ -27,7 +27,8 @@ const processCoffeeScript = () => {
     "./tests/*.coffee",
   ])
     .pipe(sourcemaps.init())
-    .pipe(coffee()).on("error", console.error.bind(console))
+    .pipe(coffee())
+    .on("error", console.error.bind(console))
     .pipe(sourcemaps.write("./"))
     .pipe(dest("./dist"))
     .pipe(filter("*.js"))
@@ -42,14 +43,15 @@ const processCoffeeScript = () => {
 };
 
 const processPlainJs = () => {
-  return src([
-    "./src/**/*.js",
-  ]).pipe(sourcemaps.init())
+  return src(["./src/**/*.js"])
+    .pipe(sourcemaps.init())
     .pipe(uglify())
-    .pipe(rename((path) => {
-      path.dirname = ""; // Remove directory structure
-      path.basename += ".min";
-    }))
+    .pipe(
+      rename((path) => {
+        path.dirname = ""; // Remove directory structure
+        path.basename += ".min";
+      }),
+    )
     .pipe(dest("./dist"))
     .on("error", (err) => {
       console.error("Error while processing plain JS files: ", err);
@@ -60,7 +62,7 @@ const makeJs = parallel(processPlainJs, processCoffeeScript);
 
 const getBumpedVersion = async () => {
   try {
-    const { stdout } = await execPromise("git cliff --bumped-version");
+    const { stdout } = await execPromise("git cliff --unreleased --bumped-version");
     return stdout.trim();
   } catch (err) {
     console.error("Error getting bumped version:", err);
@@ -81,6 +83,7 @@ const bumpVersion = async () => {
     console.log(`Updated package.json version to ${version}`);
   } catch (err) {
     console.error("Error getting bumped version:", err);
+    throw err;
   }
 };
 
@@ -90,31 +93,41 @@ const generateChangelog = async () => {
     console.log("Changelog generated successfully");
   } catch (err) {
     console.error("Error generating changelog:", err);
+    throw err;
   }
 };
 
 const tagGit = async () => {
   try {
     const v = await getBumpedVersion();
+    console.log("git add .");
     await execPromise("git add .");
+    console.log("git commit");
     await execPromise(`git commit -m "Bump version to ${v} + CHANGELOG"`);
-    await execPromise(`git tag ${v}`);
+    console.log(`git tag ${v} --sign --message "${v}"`);
+    await execPromise(`git tag ${v} --sign --message "${v}"`);
 
     console.log(`Created commit and tag for version ${v}`);
   } catch (err) {
     console.error("Error in git commit and tag:", err);
+    throw err;
   }
 };
 
 const tag = async (cb) => {
-  parallel(makeCss, makeJs);
-  //TODO verify if test are being passed
-  await bumpVersion();
-  await generateChangelog();
-  // Do the git operations (create commit, tag etc.)
-  await tagGit();
+  try {
+    parallel(makeCss, makeJs);
+    //TODO verify if test are being passed
+    await bumpVersion();
+    await generateChangelog();
+    // Do the git operations (create commit, tag etc.)
+    await tagGit();
 
-  cb();
+    cb();
+  } catch (err) {
+    console.erorr("Error in creating new release tag");
+    console.erorr(err);
+  }
 };
 
 // TODO
@@ -123,14 +136,17 @@ const tag = async (cb) => {
 // }
 
 const watchFiles = () => {
-  watch([
-    "./src/**/*.coffee",
-    "./locales/*.coffee",
-    "./tests/*.coffee",
-    "./src/**/*.js",
-    "./locales/*.js",
-    "./tests/*.js",
-  ], makeJs);
+  watch(
+    [
+      "./src/**/*.coffee",
+      "./locales/*.coffee",
+      "./tests/*.coffee",
+      "./src/**/*.js",
+      "./locales/*.js",
+      "./tests/*.js",
+    ],
+    makeJs,
+  );
   watch("./dist/pivot.css", makeCss);
 };
 
@@ -144,11 +160,4 @@ const serve = (done) => {
 
 const defaultTask = parallel(makeJs, makeCss);
 
-export {
-  defaultTask as default,
-  makeCss,
-  makeJs,
-  serve,
-  tag,
-  watchFiles as watch,
-};
+export { defaultTask as default, makeCss, makeJs, serve, tag, watchFiles as watch };

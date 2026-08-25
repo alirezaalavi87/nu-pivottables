@@ -345,34 +345,3 @@ button,
     right: 0; /* to also work in RTL layouts */
     z-index: 1;
 }
-
-
-/**********
- * for Billboard.js
- ***********/
-#legend {
-    width: 100%;
-    /* display: grid; */
-    /* grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); */
-    /* grid-auto-rows: minmax(20px, auto); */
-    /* justify-items: stretch; */
-    /* align-items: center; */
-    font-size: 12px;
-}
-
-#legend div > span {
-    width: 10px;
-    height: 10px;
-    margin-right: 5px;
-    display: inline-block;
-}
-
-.bb-legend-item {
-    text-overflow: ellipsis;
-    text-wrap: wrap;
-    overflow: hidden;
-}
-
-/**********************
- * END for Billboard.js
- **********************/

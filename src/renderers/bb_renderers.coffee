@@ -5,7 +5,7 @@ callWithJQuery = (pivotModule) ->
         define ["jquery", "bb"], pivotModule
     # Plain browser env
     else
-        pivotModule jQuery, bb
+        pivotModule jQuery, (if typeof bb != "undefined" then bb else null)
 
 callWithJQuery ($, bb) ->
 
@@ -115,15 +115,10 @@ callWithJQuery ($, bb) ->
             bar:
                 width:
                     ratio: 0.8
-            legend:
-                contents:
-                    bindto: "#legend"
-                    template: "<div><span style='background-color:{=COLOR}'></span>{=TITLE}</div>"
             clipPath: false
             resize:
                 auto: "parent"
                 timer: false
-
 
         params = $.extend(true, {}, params, opts.bb)
         if chartOpts.type == "scatter"
@@ -175,11 +170,11 @@ callWithJQuery ($, bb) ->
         # Lazy rendering might also be possible but I couldn't figure it out.
         # https://github.com/naver/billboard.js/issues/1015
         result = $("<div>").appendTo $(".pvtRendererArea")
-        legendsContainer = $("<div id='legend'>")
         params.bindto = result[0]
-        bb.generate params
+        bbInst = opts.instance ? bb
+        bbInst.generate params
         result.detach()
-        return $("<div>").append title, result, legendsContainer
+        return $("<div>").append title, result
 
     $.pivotUtilities.bb_renderers =
         "Horizontal Bar Chart": makeBBChart(type: "bar", horizontal: true)
