@@ -29,10 +29,15 @@ It is a pivot table library with drag'n'drop functionality.
 **TODO**
 
 * [ ] Improve performance of rendering tables [#1371](https://github.com/nicolaskruchten/pivottable/issues/1371)
-* [ ] Integrate a proper build tool (probably Vite.js) to modernize software and avoid the horrendous UMD export/imports, handle relative paths in build, enhance DX etc.
+  * You can render Billboard.js charts with
+    [canvas renderer](https://github.com/naver/billboard.js/blob/master/CHANGELOG-v4.md#canvas-rendering-mode).
+    See [Billboard.js + Canvas example](/examples/bb_canvas.html) for how to use it with nu-pivottables.
+* [ ] Integrate a proper build tool (probably Vite.js) to modernize software
+      and avoid the horrendous UMD export/imports and support ESM, handle
+      relative paths in build, enhance DX etc.
+* [ ] Incrementally rewrite in modern JS + JSdoc
 * [ ] add CI/CD
 * [ ] fork [pivottable.js wiki](https://github.com/nicolaskruchten/pivottable) and enhance it for nu-pivottables
-* [ ] Update README
 * [ ] add integrations with other ecosystems (python, R)
 * [ ] Remove dependency from JQuery and JQueryUI while keeping the project usable form JQuery (backward compatibility)
 
