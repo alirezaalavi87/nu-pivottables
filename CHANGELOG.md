@@ -1,6 +1,27 @@
 # Nu-pivottables Changelog
 
-## [3.1.0] - 2026-06-14
+## [3.2.0] - 2026-08-25
+
+### 🚀 Added
+
+- *(bb)* Support canvas rendering
+
+### 🐛 Fixed
+
+- *(locale)* Farsi thousands separator and decimal separator
+- Use default bb-legends
+
+### 📚 Documentation
+
+- Update contributing dev guide
+- Update contributing dev guide
+
+### ⚙️ Miscellaneous Tasks
+
+- Upgrade billboard.js 3.17->4.0.3
+- Fix tag task
+
+## [3.1.0] - 2026-07-27
 
 ### 🚀 Added
 

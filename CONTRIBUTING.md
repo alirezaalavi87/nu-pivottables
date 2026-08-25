@@ -56,6 +56,8 @@ This is of course only allowed for people with the authorization, but for future
 
 * Run the `tag` task from `gulp`
 
+**NOTE**: Always run tag and release form `master` branch
+
 ```sh
 ./node_modules/gulp/bin/gulp.js tag
 ```
