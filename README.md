@@ -15,8 +15,8 @@ It is a pivot table library with drag'n'drop functionality.
   * gulp v2 -> v5\
     updated gulpfile
   * jasmine v2 -> v5
-  * D3.js v4 -> v7
-  * c3.js -> billboard.js
+  * D3.js v4 -> v7.9
+  * c3.js -> billboard.js 4.0.3
 * Refactor code for more modularity and aligning with FP standards
 * Farsi(Persian) localization
 * Slowly replace coffeescript with modern JS + JSdoc
@@ -159,16 +159,6 @@ More extensive documentation can be found in the [wiki](https://github.com/nicol
 * [Localization](https://github.com/nicolaskruchten/pivottable/wiki/Localization)
 * [Optional Extra Renderers: Charting and Exporting](https://github.com/nicolaskruchten/pivottable/wiki/Optional-Extra-Renderers)
 * [Used By](https://github.com/nicolaskruchten/pivottable/wiki/Used-By)
-
-## How can I build the code and run the tests?
-
-To install the development dependencies, just run `npm install`, which will create a `node_modules` directory with the files required to run the [Gulp](http://gulpjs.com/) build system.
-
-After modifying any of the `.coffee` files at the top of the repo, you can compile/minify the files into the `dist` directory by running `node_modules/gulp/bin/gulp.js`
-
-Once that's done, you can point your browser to `tests/index.html` to run the [Jasmine](http://jasmine.github.io/) test suite. You can view the [current test results here](https://pivottable.js.org/tests).
-
-The easiest way to modify the code and work with the examples is to leave a `node_modules/gulp/bin/gulp.js watch serve` command running, which will automatically compile the CoffeeScript files when they are modified and will also run a local web server you can connect to to run the tests and examples.
 
 ## How can I contribute?
 

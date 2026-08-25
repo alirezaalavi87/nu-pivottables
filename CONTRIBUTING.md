@@ -33,7 +33,8 @@ If not running a dev server, run tests by opening
 
 ### Build
 
-Compile/minify the files into the `dist` directory by running `node_modules/gulp/bin/gulp.js`
+Compile/minify the files into the `dist` directory by running
+`node_modules/gulp/bin/gulp.js` directly.
 
 ## Pull Requests
 
