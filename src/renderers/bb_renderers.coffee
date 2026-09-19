@@ -9,7 +9,7 @@ callWithJQuery = (pivotModule) ->
 
 callWithJQuery ($, bb) ->
 
-    makeBBChart = (chartOpts = {}) -> (pivotData, opts) ->
+    makeBBChart = (chartOpts = {}) -> (pivotData, opts, callerEl) ->
         defaults =
             localeStrings: {vs: "vs", by: "by"}
             bb: {}
@@ -169,9 +169,17 @@ callWithJQuery ($, bb) ->
         # attaching to the render box results in correct rendering and calculation of dimensions.
         # Lazy rendering might also be possible but I couldn't figure it out.
         # https://github.com/naver/billboard.js/issues/1015
-        result = $("<div>").appendTo $(".pvtRendererArea")
+        if params.bindto
+            resultContainer = $(params.bindto)
+        else if $(".pvtRendererArea").length
+            resultContainer = $(".pvtRendererArea")
+        else
+            resultContainer = callerEl
+
+        result = $("<div>").appendTo resultContainer
         params.bindto = result[0]
         bbInst = opts.instance ? bb
+        # TODO: catch and handle errors in `generate`
         bbInst.generate params
         result.detach()
         return $("<div>").append title, result

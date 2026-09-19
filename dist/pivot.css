@@ -17,7 +17,6 @@
     --color__on-error: #ffffff;
     --color__error-container: #e6aaa7;
     --color__on-error-container: #330907;
-    --color__background: #f4f4f4;
     --color__on-background: #323233;
     --color__surface: #ffffff;
     --color__on-surface: #323233;
@@ -40,7 +39,6 @@
     --color__on-error-dark: #4c0e0b;
     --color__error-container-dark: #66120e;
     --color__on-error-container-dark: #e6aaa7;
-    --color__background-dark: #323233;
     --color__on-background-dark: #e4e4e6;
     --color__surface-dark: #323233;
     --color__on-surface-dark: #e4e4e6;
@@ -53,7 +51,6 @@ body {
     font-size: 10pt;
     margin-left: 0;
     margin-right: 0;
-    background-color: var(--color__background);
 }
 
 p {

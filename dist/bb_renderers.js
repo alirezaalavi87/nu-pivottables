@@ -15,8 +15,8 @@
   callWithJQuery(function($, bb) {
     var makeBBChart;
     makeBBChart = function(chartOpts = {}) {
-      return function(pivotData, opts) {
-        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, bbInst, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, ref4, result, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
+      return function(pivotData, opts, callerEl) {
+        var agg, attrs, base, base1, base2, base3, base4, base5, base6, base7, bbInst, c, categories, colKey, colKeys, columns, dataColumns, defaults, formatter, fullAggName, groupByTitle, h, hAxisTitle, headers, i, j, k, l, len, len1, len2, len3, len4, m, numCharsInHAxis, numSeries, params, ref, ref1, ref2, ref3, ref4, result, resultContainer, rotationAngle, row, rowHeader, rowKey, rowKeys, s, scatterData, series, title, titleText, vAxisTitle, val, vals, x, xs, y;
         defaults = {
           localeStrings: {
             vs: "vs",
@@ -300,9 +300,17 @@
         // attaching to the render box results in correct rendering and calculation of dimensions.
         // Lazy rendering might also be possible but I couldn't figure it out.
         // https://github.com/naver/billboard.js/issues/1015
-        result = $("<div>").appendTo($(".pvtRendererArea"));
+        if (params.bindto) {
+          resultContainer = $(params.bindto);
+        } else if ($(".pvtRendererArea")) {
+          resultContainer = $(".pvtRendererArea");
+        } else {
+          resultContainer = callerEl;
+        }
+        result = $("<div>").appendTo(resultContainer);
         params.bindto = result[0];
         bbInst = (ref4 = opts.instance) != null ? ref4 : bb;
+        // TODO: catch and handle errors in `generate`
         bbInst.generate(params);
         result.detach();
         return $("<div>").append(title, result);

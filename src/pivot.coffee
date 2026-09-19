@@ -618,6 +618,7 @@ callWithJQuery ($) ->
     ###
 
     $.fn.pivot = (input, inputOpts, locale="en") ->
+        callerEl = this[0]
         locale = "en" if not locales[locale]?
         defaults =
             cols : [], rows: [], vals: []
@@ -641,7 +642,7 @@ callWithJQuery ($) ->
         try
             pivotData = new opts.dataClass(input, opts)
             try
-                result = await opts.renderer(pivotData, opts.rendererOptions)
+                result = await opts.renderer(pivotData, opts.rendererOptions, callerEl)
             catch e
                 console.error(e) if console?
                 result = $("<span>").html opts.localeStrings.renderError
