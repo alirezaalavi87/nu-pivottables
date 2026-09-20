@@ -302,7 +302,7 @@
         // https://github.com/naver/billboard.js/issues/1015
         if (params.bindto) {
           resultContainer = $(params.bindto);
-        } else if ($(".pvtRendererArea")) {
+        } else if ($(".pvtRendererArea").length) {
           resultContainer = $(".pvtRendererArea");
         } else {
           resultContainer = callerEl;
