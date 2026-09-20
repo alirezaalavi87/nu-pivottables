@@ -1,5 +1,19 @@
 # Nu-pivottables Changelog
 
+## [3.2.1] - 2026-09-20
+
+### 🐛 Fixed
+
+- *(bb)* Support `bindto` and render in parent
+
+### 🎨 Styling
+
+- Fix ui layout sizing and bb rtl rendering
+
+### ⚙️ Miscellaneous Tasks
+
+- *(examples)* Upgrade to newer billboard.js versions
+
 ## [3.2.0] - 2026-08-25
 
 ### 🚀 Added
