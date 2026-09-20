@@ -102,6 +102,11 @@ table.pvtTable tr td {
     text-align: center;
 }
 
+.pvtUi {
+  width: 100%;
+  height: 100%;
+}
+
 .pvtTotal,
 .pvtGrandTotal {
     font-weight: bold;
@@ -149,6 +154,8 @@ table.pvtTable tr td {
 .pvtRendererArea {
     width: 100%;
     height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
     opacity: 0.8;
     /* to render charts correctly in both RTL and LTR.
      * In charts need to be LTR but in RTL layouts, add direction:rtl to .pvtTable
@@ -341,4 +348,9 @@ button,
     left: 0;
     right: 0; /* to also work in RTL layouts */
     z-index: 1;
+}
+
+.bb {
+  /* direction: ltr` is needed so charts with RTL content also render correctly. */
+  direction: ltr;
 }
